@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Whale Deck Pro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0E14; --panel:#141A26; --panel2:#0F141E; --line:#222C3D;
+    --ink:#E7EBF2; --mute:#8A93A6; --faint:#5C6678;
+    --long:#2ED3B7; --short:#F0616D; --warn:#F5A623; --accent:#6C8CFF; --r:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1100px 550px at 85% -10%, rgba(108,140,255,.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 12%, rgba(46,211,183,.07), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;
+    -webkit-font-smoothing:antialiased;
+    padding:16px; max-width:780px; margin:0 auto;
+  }
+  h1,h2,.disp{font-family:"Space Grotesk",system-ui,sans-serif}
+  a{color:inherit}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 2px 16px}
+  .mark{font-family:"Space Grotesk";font-weight:700;font-size:22px}
+  .mark b{color:var(--long)}
+  .sub{font-size:11px;color:var(--mute);letter-spacing:.14em;text-transform:uppercase}
+  .clock{font-size:11px;color:var(--mute)}
+  button{font-family:inherit;cursor:pointer;border:1px solid var(--line);background:var(--panel);
+    color:var(--ink);border-radius:9px;padding:8px 12px;font-size:12px;transition:.15s}
+  button:hover{border-color:var(--accent)}
+  button:disabled{opacity:.5;cursor:wait}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .cta{background:linear-gradient(135deg,#26406e,#1c2f52);border-color:#3a55a0;font-weight:700}
+  .banner{display:none;background:rgba(245,166,35,.10);border:1px solid rgba(245,166,35,.4);
+    color:#F7CE86;border-radius:10px;padding:10px 12px;font-size:12px;margin:0 0 14px;line-height:1.5}
+  .banner.show{display:block}
+  .eyebrow{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin:20px 2px 10px;display:flex;justify-content:space-between;align-items:center}
+  .cards{display:grid;grid-template-columns:1fr;gap:12px}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);padding:14px 15px}
+  .crow{display:flex;align-items:baseline;justify-content:space-between}
+  .coin{font-family:"Space Grotesk";font-weight:700;font-size:17px}
+  .px{font-size:16px}
+  .chg{font-size:12px;margin-left:8px}
+  .up{color:var(--long)} .down{color:var(--short)} .neu{color:var(--mute)}
+  .bar{position:relative;height:10px;border-radius:6px;overflow:hidden;margin:12px 0 7px;background:#0a0e15;border:1px solid var(--line)}
+  .bar .l{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#1f9f8b,var(--long))}
+  .bar .s{position:absolute;right:0;top:0;bottom:0;background:linear-gradient(270deg,#c24651,var(--short))}
+  .barlab{display:flex;justify-content:space-between;font-size:11px}
+  .barlab .ll{color:var(--long)} .barlab .ss{color:var(--short)}
+  .meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:11px}
+  .meta div{background:#0b0f18;border:1px solid var(--line);border-radius:9px;padding:7px 9px}
+  .meta .k{font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .meta .v{font-size:13px;margin-top:3px}
+  .tbl-wrap{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);padding:4px 10px 6px;overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:11.5px;min-width:560px}
+  th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:500}
+  td.num,th.num{text-align:right}
+  tr:last-child td{border-bottom:none}
+  .side{font-weight:700}
+  #analysis{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+    border-radius:var(--r);padding:16px;font-size:13px;line-height:1.75;display:none;white-space:normal}
+  #analysis.show{display:block}
+  #analysis b{color:#fff}
+  #analysis .hl{color:var(--accent)}
+  .pad{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .pad a{display:flex;flex-direction:column;gap:3px;text-decoration:none;background:var(--panel);
+    border:1px solid var(--line);border-radius:12px;padding:12px 14px;transition:.15s}
+  .pad a:hover{border-color:var(--accent)}
+  .pad .t{font-family:"Space Grotesk";font-weight:600;font-size:13.5px}
+  .pad .d{font-size:10.5px;color:var(--mute);line-height:1.4}
+  .pad .arrow{color:var(--accent)}
+  footer{margin:24px 2px 8px;font-size:11px;color:var(--faint);line-height:1.6}
+  .skel{color:var(--faint)}
+  @media (max-width:520px){ .pad{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="mark">Whale<b>Deck</b> Pro</div>
+      <div class="sub">Hyperliquid · live · Desk-Lesart</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+      <div class="clock" id="clocktxt">lädt…</div>
+      <div style="display:flex;gap:8px">
+        <button id="refresh">Aktualisieren</button>
+        <button id="analyze" class="cta">🧠 Desk-Analyse</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="eyebrow"><span>Märkte · Wal-Positionierung</span></div>
+  <div class="cards" id="cards"><div class="card skel">Lade Marktdaten…</div></div>
+
+  <div class="eyebrow"><span>Desk-Lesart</span><span id="ai-time" style="letter-spacing:0;text-transform:none"></span></div>
+  <div id="analysis"></div>
+
+  <div class="eyebrow"><span>Wal-Positionen · Entry / Hebel / Liq</span></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Wallet</th><th>Coin</th><th>Seite</th><th class="num">Größe</th>
+        <th class="num">Entry</th><th class="num">Hebel</th><th class="num">Liq-Preis</th><th class="num">uPnL</th>
+      </tr></thead>
+      <tbody id="positions"><tr><td colspan="8" class="skel">Lade Positionen…</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="eyebrow"><span>Heatmaps &amp; Liquidationen · extern</span></div>
+  <div class="pad">
+    <a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">
+      <div class="t">Coinglass Heatmap <span class="arrow">↗</span></div>
+      <div class="d">Liquidations-Heatmap, 12h–1J</div></a>
+    <a href="https://kiyotaka.ai/data/liquidations" target="_blank" rel="noopener">
+      <div class="t">Kiyotaka <span class="arrow">↗</span></div>
+      <div class="d">Liquidationen Long/Short, 1h–1w</div></a>
+    <a href="https://hyperscreener.asxn.xyz/" target="_blank" rel="noopener">
+      <div class="t">ASXN Hyperscreener <span class="arrow">↗</span></div>
+      <div class="d">Perps, OI, Volumen, Top-Trader</div></a>
+    <a href="https://hyperstats.org/" target="_blank" rel="noopener">
+      <div class="t">HyperStats <span class="arrow">↗</span></div>
+      <div class="d">Wal-Tracker &amp; Grades</div></a>
+  </div>
+
+  <footer>
+    Daten: Hyperliquid-API · Wal-Auswahl: HyperStats-Top-Adressen · Lesart: KI-generiert, keine Anlageberatung.<br>
+    Positionierung zeigt, wo der Treibstoff liegt — nicht, wann er zündet.
+  </footer>
+
+<script>
+const HL_API="https://api.hyperliquid.xyz/info";
+const COINS=["BTC","ETH","HYPE"];
+const WHALES=[
+ "0x0ddf9bae2af4b874b96d287a5ad42eb47138a902","0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
+ "0x7fba7e745bd97f828c824589680749b55a8c04ab","0x5b5d51203a0f9079f8aeb098a6523a13f298c060",
+ "0x152e41f0b83e6cad4b5dc730c1d6279b7d67c9dc","0xa1830e8d9f019feb448478a171bb37cc6c4c0482",
+ "0x218a65e21eddeece7a9df38c6bbdd89f692b7da2","0x32008fcb6bbd16532afc83ca8b6c920dde22c407",
+ "0xcf5343ba750a6e30afbb1dadda08bc78f8c8ee11","0x3440f23a87f1950e7a88cd248fd270e92d1132c5",
+ "0xa312114b5795dff9b8db50474dd57701aa78ad1e","0x8af700ba841f30e0a3fcb0ee4c4a9d223e1efa05",
+ "0xad227f63d34e7251c1d0ab65e64eeea07aee4e44","0x6859da14835424957a1e6b397d8026b1d9ff7e1e",
+ "0xac487c027ffe32021bbba77e30786f8c8f353201","0x66f889094739dbb7d20aa60f645acd88feba75a9",
+ "0x6daec5ff434924e0839358e710e6ae5f158590de","0xd21d931890d27b6e7e2e668f27931e17698e90f1"
+];
+
+const $=id=>document.getElementById(id);
+let lastData=null;
+
+function usd(x){const a=Math.abs(x),s=x<0?"-":"";
+  if(a>=1e9)return s+"$"+(a/1e9).toFixed(2)+"B";
+  if(a>=1e6)return s+"$"+(a/1e6).toFixed(2)+"M";
+  if(a>=1e3)return s+"$"+(a/1e3).toFixed(1)+"K";
+  return s+"$"+a.toFixed(0);}
+function price(x){return x>=1000?"$"+x.toLocaleString("en-US",{maximumFractionDigits:0})
+  :"$"+x.toLocaleString("en-US",{maximumFractionDigits:3});}
+function shortA(a){return a.slice(0,6)+"…"+a.slice(-4);}
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+async function hl(body){
+  const r=await fetch(HL_API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  return r.json();
+}
+
+async function loadMarket(){
+  const [meta,ctxs]=await hl({type:"metaAndAssetCtxs"});
+  const idx={}; meta.universe.forEach((a,i)=>idx[a.name]=i);
+  const out={};
+  COINS.forEach(c=>{const i=idx[c]; if(i==null)return;
+    const x=ctxs[i]; const mark=parseFloat(x.markPx||0), prev=parseFloat(x.prevDayPx||0);
+    out[c]={price:mark, chg:prev?(mark/prev-1)*100:0,
+      oi:parseFloat(x.openInterest||0)*mark, vol:parseFloat(x.dayNtlVlm||0),
+      funding:parseFloat(x.funding||0)*100};});
+  return out;
+}
+
+async function loadWhales(){
+  const long={BTC:0,ETH:0,HYPE:0}, short={BTC:0,ETH:0,HYPE:0}, plist=[];
+  const res=await Promise.allSettled(WHALES.map(a=>hl({type:"clearinghouseState",user:a})));
+  res.forEach((r,i)=>{ if(r.status!=="fulfilled")return;
+    const st=r.value, addr=WHALES[i];
+    (st.assetPositions||[]).forEach(ap=>{const p=ap.position||{};
+      const coin=p.coin; if(!COINS.includes(coin))return;
+      const szi=parseFloat(p.szi||0); if(szi===0)return;
+      const pv=Math.abs(parseFloat(p.positionValue||0));
+      const side=szi>0?"Long":"Short";
+      if(szi>0)long[coin]+=pv; else short[coin]+=pv;
+      plist.push({addr, coin, side, notional:pv,
+        entry:parseFloat(p.entryPx||0),
+        lev:(p.leverage&&p.leverage.value)?p.leverage.value:null,
+        liq:p.liquidationPx?parseFloat(p.liquidationPx):null,
+        upnl:parseFloat(p.unrealizedPnl||0)});
+    });
+  });
+  plist.sort((a,b)=>b.notional-a.notional);
+  return {long,short,plist};
+}
+
+function renderCards(mkt,w){
+  const el=$("cards"); el.innerHTML="";
+  COINS.forEach(c=>{
+    const m=mkt[c]; const L=w.long[c]||0, S=w.short[c]||0, tot=L+S;
+    const lp=tot?L/tot*100:50;
+    const chgCls=!m?"neu":m.chg>0.05?"up":m.chg<-0.05?"down":"neu";
+    const chgTxt=m?(m.chg>=0?"+":"")+m.chg.toFixed(2)+"%":"—";
+    const fund=m?(m.funding>=0?"+":"")+m.funding.toFixed(4)+"%":"—";
+    const card=document.createElement("div"); card.className="card";
+    card.innerHTML=`
+      <div class="crow"><span class="coin">${c}</span>
+        <span><span class="px">${m?price(m.price):"—"}</span><span class="chg ${chgCls}">${chgTxt}</span></span></div>
+      <div class="bar"><div class="l" style="width:${lp}%"></div><div class="s" style="width:${100-lp}%"></div></div>
+      <div class="barlab"><span class="ll">${tot?lp.toFixed(0)+"% Long":"—"}</span>
+        <span class="ss">${tot?(100-lp).toFixed(0)+"% Short":"keine Wal-Position"}</span></div>
+      <div class="meta">
+        <div><div class="k">Open Int.</div><div class="v">${m?usd(m.oi):"—"}</div></div>
+        <div><div class="k">Vol 24h</div><div class="v">${m?usd(m.vol):"—"}</div></div>
+        <div><div class="k">Funding/h</div><div class="v">${fund}</div></div>
+      </div>`;
+    el.appendChild(card);
+  });
+}
+
+function renderPositions(w){
+  const tb=$("positions"); tb.innerHTML="";
+  if(!w.plist.length){tb.innerHTML='<tr><td colspan="8" class="skel">Keine offenen Wal-Positionen in BTC/ETH/HYPE.</td></tr>';return;}
+  w.plist.slice(0,16).forEach(p=>{
+    const sc=p.side==="Long"?"up":"down", uc=p.upnl>=0?"up":"down";
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td><a href="https://hyperstats.org/wallet/${p.addr}" target="_blank" rel="noopener">${shortA(p.addr)}</a></td>
+      <td>${p.coin}</td><td class="side ${sc}">${p.side}</td>
+      <td class="num">${usd(p.notional)}</td>
+      <td class="num">${p.entry?price(p.entry):"—"}</td>
+      <td class="num">${p.lev?p.lev+"x":"—"}</td>
+      <td class="num">${p.liq?price(p.liq):"—"}</td>
+      <td class="num ${uc}">${usd(p.upnl)}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function showBanner(m){const b=$("banner");b.textContent=m;b.classList.add("show");}
+function hideBanner(){$("banner").classList.remove("show");}
+
+async function refresh(){
+  try{
+    const [mkt,w]=await Promise.all([loadMarket(),loadWhales()]);
+    lastData={mkt,w};
+    renderCards(mkt,w); renderPositions(w); hideBanner();
+    $("clocktxt").textContent="Aktualisiert "+new Date().toLocaleTimeString("de-DE");
+  }catch(e){
+    showBanner("Live-Daten momentan nicht abrufbar ("+e.message+"). Externe Seiten unten funktionieren weiterhin.");
+    $("clocktxt").textContent="offline";
+  }
+}
+
+/* ---------- Desk-Analyse via Claude API ---------- */
+function summarize(){
+  if(!lastData)return null;
+  const {mkt,w}=lastData;
+  const coins=COINS.map(c=>{
+    const m=mkt[c]||{}, L=w.long[c]||0, S=w.short[c]||0, tot=L+S;
+    return {coin:c, preis:m.price, chg24h_pct:m.chg&&+m.chg.toFixed(2),
+      oi_usd:m.oi&&Math.round(m.oi), vol24h_usd:m.vol&&Math.round(m.vol),
+      funding_pro_h_pct:m.funding&&+m.funding.toFixed(4),
+      whale_long_pct:tot?+(L/tot*100).toFixed(0):null};});
+  const pos=w.plist.slice(0,12).map(p=>({wallet:shortA(p.addr),coin:p.coin,seite:p.side,
+    groesse_usd:Math.round(p.notional),entry:p.entry,hebel:p.lev,liq:p.liq,upnl_usd:Math.round(p.upnl)}));
+  return {zeit:new Date().toISOString(),maerkte:coins,wal_positionen:pos};
+}
+
+function mdToHtml(t){
+  return esc(t)
+    .replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")
+    .replace(/^### (.+)$/gm,'<div class="hl" style="font-weight:700;margin-top:10px">$1</div>')
+    .replace(/^## (.+)$/gm,'<div class="hl" style="font-weight:700;font-size:15px;margin-top:12px">$1</div>')
+    .replace(/^- (.+)$/gm,"• $1")
+    .replace(/\n/g,"<br>");
+}
+
+async function analyze(){
+  const btn=$("analyze");
+  const data=summarize();
+  if(!data){showBanner("Erst Daten laden — tippe Aktualisieren.");return;}
+  btn.disabled=true; btn.textContent="Analysiere…";
+  const box=$("analysis"); box.classList.add("show");
+  box.innerHTML='<span class="skel">Hole Heatmap-Lage und erstelle Lesart… (ca. 20–40 Sek.)</span>';
+  try{
+    const prompt=`Du bist ein erfahrener Krypto-Derivate-Analyst an einem Trading-Desk. Analysiere die folgenden LIVE-Daten von Hyperliquid (Top-Whale-Positionen von HyperStats, aggregiertes Long/Short, Open Interest, Funding).
+
+Nutze zusätzlich die Websuche, um die AKTUELLE Liquidations-Heatmap-Lage für BTC und ETH zu prüfen (wo liegen die dichten Liquidationscluster relativ zum Preis?).
+
+DATEN:
+${JSON.stringify(data)}
+
+Erstelle auf DEUTSCH eine kompakte Desk-Lesart für BTC, ETH und HYPE (Timeframe 4h/Daily). Pro Coin GENAU dieses Format:
+## COIN — Bias: [long-lastig/short-lastig/neutral] + ein Wort zur Verfassung
+- **Lage:** 1-2 Sätze (Wale, Funding, OI, Heatmap-Cluster)
+- **Lesart:** 1-2 Sätze — wohin zeigt der Weg des geringsten Widerstands und WARUM
+- **Trigger:** konkretes Level/Ereignis, das das Szenario aktiviert
+- **Invalidierung:** konkretes Level, an dem die These tot ist
+
+Am Ende 1 Satz "Gesamtbild". Keine Anlageberatung-Floskeln, keine Einleitung, direkt loslegen. Sei konkret mit Zahlen. Wenn die Websuche keine frischen Heatmap-Infos liefert, sag das ehrlich in der Lage-Zeile.`;
+    const r=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,
+        messages:[{role:"user",content:prompt}],
+        tools:[{type:"web_search_20250305",name:"web_search"}]})});
+    const j=await r.json();
+    if(j.error)throw new Error(j.error.message||"API-Fehler");
+    const text=(j.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
+    if(!text)throw new Error("leere Antwort");
+    box.innerHTML=mdToHtml(text);
+    $("ai-time").textContent="Stand "+new Date().toLocaleTimeString("de-DE");
+  }catch(e){
+    box.innerHTML='<span style="color:var(--warn)">Analyse nicht möglich: '+esc(e.message)+
+      '.<br>Hinweis: Die Desk-Analyse funktioniert nur, wenn das Dashboard innerhalb der Claude-App geöffnet ist. Als Browser-Lesezeichen zeigt es die Live-Daten — für die Lesart frag mich im Chat.</span>';
+  }finally{
+    btn.disabled=false; btn.textContent="🧠 Desk-Analyse";
+  }
+}
+
+$("refresh").onclick=refresh;
+$("analyze").onclick=analyze;
+refresh();
+setInterval(refresh,60000);
+</script>
+</body>
+</html>
