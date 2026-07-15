@@ -79,6 +79,12 @@
   .pad .arrow{color:var(--accent)}
   footer{margin:24px 2px 8px;font-size:11px;color:var(--faint);line-height:1.6}
   .skel{color:var(--faint)}
+  .snap-time{font-size:10px;color:var(--faint);letter-spacing:0;text-transform:none}
+  .snap-note{font-size:10.5px;color:var(--faint);line-height:1.5;margin:-4px 2px 6px;padding:0 2px}
+  .grade{font-weight:700;padding:2px 7px;border-radius:6px;font-size:11px}
+  .g-s{background:rgba(46,211,183,.15);color:var(--long)}
+  .g-mid{background:rgba(245,166,35,.15);color:var(--warn)}
+  .g-low{background:rgba(240,97,109,.15);color:var(--short)}
   @media (max-width:520px){ .pad{grid-template-columns:1fr} }
 </style>
 </head>
@@ -105,7 +111,7 @@
   <div class="eyebrow"><span>Desk-Lesart</span><span id="ai-time" style="letter-spacing:0;text-transform:none"></span></div>
   <div id="analysis"></div>
 
-  <div class="eyebrow"><span>Wal-Positionen · Entry / Hebel / Liq</span></div>
+  <div class="eyebrow"><span>Spalte 1 · Verfolgte Wale · live (Entry / Hebel / Liq)</span></div>
   <div class="tbl-wrap">
     <table>
       <thead><tr>
@@ -115,6 +121,27 @@
       <tbody id="positions"><tr><td colspan="8" class="skel">Lade Positionen…</td></tr></tbody>
     </table>
   </div>
+
+  <div class="eyebrow"><span>Spalte 2 · Größte Konten mit höchster Trefferquote</span><span class="snap-time">Snapshot 15.07.</span></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Wallet</th><th class="num">Konto</th><th class="num">Trefferquote</th><th>Bewertung</th><th>Position</th>
+      </tr></thead>
+      <tbody id="col2"></tbody>
+    </table>
+  </div>
+
+  <div class="eyebrow"><span>Spalte 3 · Nur Trefferquote · Größe egal</span><span class="snap-time">Snapshot 15.07.</span></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Wallet</th><th class="num">Trefferquote</th><th class="num">Konto</th><th>Bewertung</th><th>Position</th>
+      </tr></thead>
+      <tbody id="col3"></tbody>
+    </table>
+  </div>
+  <div class="snap-note">Spalten 2 &amp; 3 sind Momentaufnahmen von HyperStats, keine Live-Daten (kein öffentliches Live-API für Trefferquote). Im Chat "Trefferquote aktualisieren" sagen, dann werden sie neu befüllt.</div>
 
   <div class="eyebrow"><span>Heatmaps &amp; Liquidationen · extern</span></div>
   <div class="pad">
@@ -154,6 +181,61 @@ const WHALES=[
 
 const $=id=>document.getElementById(id);
 let lastData=null;
+
+// Snapshot von HyperStats (hyperstats.org/traders), Stand 15.07.2026 — kein Live-API verfügbar
+const SNAP_COL2=[ // Größte Konten, sortiert nach Trefferquote
+  {addr:"0x0ddf9bae2af4b874b96d287a5ad42eb47138a902",acct:15460000,wr:100.0,grade:"A+",pos:"ETH Short"},
+  {addr:"0xd6e56265890b76413d1d527eb9b75e334c0c5b42",acct:12870000,wr:81.1,grade:"C",pos:"HYPE Short"},
+  {addr:"0xebe837cd345469cbc5d6e1fd3d15ee5079ac885f",acct:10100000,wr:65.0,grade:"C",pos:"—"},
+  {addr:"0x7fba7e745bd97f828c824589680749b55a8c04ab",acct:4780000,wr:68.4,grade:"A",pos:"ETH Long"},
+  {addr:"0xa1830e8d9f019feb448478a171bb37cc6c4c0482",acct:4760000,wr:41.7,grade:"D",pos:"BTC Long"},
+  {addr:"0x218a65e21eddeece7a9df38c6bbdd89f692b7da2",acct:4100000,wr:37.6,grade:"S+",pos:"BTC Short"},
+  {addr:"0x152e41f0b83e6cad4b5dc730c1d6279b7d67c9dc",acct:4630000,wr:48.9,grade:"D",pos:"HYPE Long"},
+  {addr:"0x3440f23a87f1950e7a88cd248fd270e92d1132c5",acct:3680000,wr:61.9,grade:"B",pos:"BTC Short"},
+  {addr:"0x32008fcb6bbd16532afc83ca8b6c920dde22c407",acct:3410000,wr:13.9,grade:"B+",pos:"BTC Short"},
+  {addr:"0xcf5343ba750a6e30afbb1dadda08bc78f8c8ee11",acct:3460000,wr:100.0,grade:"S",pos:"ETH Short"},
+  {addr:"0xa312114b5795dff9b8db50474dd57701aa78ad1e",acct:3330000,wr:56.1,grade:"C",pos:"HYPE Short"},
+  {addr:"0xad227f63d34e7251c1d0ab65e64eeea07aee4e44",acct:2810000,wr:76.4,grade:"D",pos:"BTC Long"},
+  {addr:"0x6859da14835424957a1e6b397d8026b1d9ff7e1e",acct:2020000,wr:56.7,grade:"A",pos:"BTC Short"},
+  {addr:"0xac487c027ffe32021bbba77e30786f8c8f353201",acct:1520000,wr:81.3,grade:"S",pos:"ETH Long"},
+  {addr:"0x6daec5ff434924e0839358e710e6ae5f158590de",acct:1180000,wr:72.0,grade:"S",pos:"BTC Short"},
+];
+const SNAP_COL3=[ // Reine Trefferquote, Größe egal
+  {addr:"0x0ddf9bae2af4b874b96d287a5ad42eb47138a902",wr:100.0,acct:15460000,grade:"A+",pos:"ETH Short"},
+  {addr:"0xc7290b4b308431a985fa9e3e8a335c2f7650517c",wr:100.0,acct:398200,grade:"S",pos:"HYPE Short"},
+  {addr:"0x9bb933d7fe63c0bbfdd92f9596ed47e25e7877a1",wr:100.0,acct:482800,grade:"A",pos:"HYPE Short"},
+  {addr:"0xcf5343ba750a6e30afbb1dadda08bc78f8c8ee11",wr:100.0,acct:3460000,grade:"S",pos:"ETH Short"},
+  {addr:"0x610b8dd6b392d010c2b6ad8d121dfc09524cb613",wr:100.0,acct:1440000,grade:"S",pos:"SOL Long"},
+  {addr:"0x8bae3527e5a33fa0cf184f37bc112d071463ab6d",wr:99.3,acct:1410000,grade:"S",pos:"MINA Long"},
+  {addr:"0xa6ee1ed1ae80b8352603654b39f5e7b9bedd5078",wr:93.3,acct:63700,grade:"A",pos:"MON Short"},
+  {addr:"0x66f889094739dbb7d20aa60f645acd88feba75a9",wr:92.0,acct:300300,grade:"S",pos:"BTC Long"},
+  {addr:"0xb1ec7febea4f841d525785955b7fe0e812d6e86a",wr:91.7,acct:771400,grade:"S+",pos:"HYPE Long"},
+  {addr:"0xd6e56265890b76413d1d527eb9b75e334c0c5b42",wr:81.1,acct:12870000,grade:"C",pos:"HYPE Short"},
+  {addr:"0xac487c027ffe32021bbba77e30786f8c8f353201",wr:81.3,acct:1520000,grade:"S",pos:"ETH Long"},
+  {addr:"0xaeaab54bbf65bfd6efed7d2eb68372298e3c2416",wr:81.6,acct:314700,grade:"B",pos:"BTC Short"},
+];
+
+function gradeCls(g){ if(g.startsWith("S"))return "g-s"; if(["A+","A","B+","B"].includes(g))return "g-mid"; return "g-low"; }
+
+function renderSnapshots(){
+  const t2=$("col2"); t2.innerHTML="";
+  SNAP_COL2.forEach(r=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
+      <td class="num">${usd(r.acct)}</td><td class="num">${r.wr.toFixed(1)}%</td>
+      <td><span class="grade ${gradeCls(r.grade)}">${r.grade}</span></td><td>${r.pos}</td>`;
+    t2.appendChild(tr);
+  });
+  const t3=$("col3"); t3.innerHTML="";
+  SNAP_COL3.forEach(r=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
+      <td class="num">${r.wr.toFixed(1)}%</td><td class="num">${usd(r.acct)}</td>
+      <td><span class="grade ${gradeCls(r.grade)}">${r.grade}</span></td><td>${r.pos}</td>`;
+    t3.appendChild(tr);
+  });
+}
+renderSnapshots();
 
 function usd(x){const a=Math.abs(x),s=x<0?"-":"";
   if(a>=1e9)return s+"$"+(a/1e9).toFixed(2)+"B";
