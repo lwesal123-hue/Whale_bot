@@ -259,8 +259,6 @@ const TODAY_BTC=[
   {addr:"0x362ad6209a5e904a5569f69884375809c5781d9f",side:"Short",opened:"vor 23 Std.",wr:63.7,grade:"B+"},
 ];
 
-const $=id=>document.getElementById(id);
-
 function renderReco(){
   const t=$("reco"); t.innerHTML="";
   RECO.forEach((r,i)=>{
@@ -288,6 +286,7 @@ function renderReco(){
 }
 renderReco();
 
+const $=id=>document.getElementById(id);
 let lastData=null;
 
 // Snapshot von HyperStats (hyperstats.org/traders), Stand 15.07.2026 — kein Live-API verfügbar
