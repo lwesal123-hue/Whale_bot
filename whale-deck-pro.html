@@ -85,6 +85,10 @@
   .g-s{background:rgba(46,211,183,.15);color:var(--long)}
   .g-mid{background:rgba(245,166,35,.15);color:var(--warn)}
   .g-low{background:rgba(240,97,109,.15);color:var(--short)}
+  .legend{font-size:10.5px;color:var(--faint);margin:-4px 2px 8px}
+  .priority-row{background:rgba(245,166,35,.06)}
+  .star{margin-right:3px}
+  .dist-close{color:var(--warn);font-weight:700}
   @media (max-width:520px){ .pad{grid-template-columns:1fr} }
 </style>
 </head>
@@ -111,37 +115,67 @@
   <div class="eyebrow"><span>Desk-Lesart</span><span id="ai-time" style="letter-spacing:0;text-transform:none"></span></div>
   <div id="analysis"></div>
 
-  <div class="eyebrow"><span>Spalte 1 · Verfolgte Wale · live (Entry / Hebel / Liq)</span></div>
+  <div class="eyebrow"><span># · Bitcoin-Positionen · live (Entry / Hebel / Liq)</span></div>
+  <div class="legend">⭐ = Orientierungs-Wal: großes Konto + hohe Trefferquote (kein reiner Größen-Rang)</div>
   <div class="tbl-wrap">
     <table>
       <thead><tr>
-        <th>Wallet</th><th>Coin</th><th>Seite</th><th class="num">Größe</th>
+        <th>#</th><th>Wallet</th><th>Seite</th><th class="num">Größe</th>
         <th class="num">Entry</th><th class="num">Hebel</th><th class="num">Liq-Preis</th><th class="num">uPnL</th>
       </tr></thead>
-      <tbody id="positions"><tr><td colspan="8" class="skel">Lade Positionen…</td></tr></tbody>
+      <tbody id="pos-btc"><tr><td colspan="8" class="skel">Lade Positionen…</td></tr></tbody>
     </table>
   </div>
 
-  <div class="eyebrow"><span>Spalte 2 · Größte Konten mit höchster Trefferquote</span><span class="snap-time">Snapshot 15.07.</span></div>
+  <div class="eyebrow"><span># · BTC Liquidations-Cluster · aus verfolgten Walen</span></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#</th><th class="num">Liq-Preis</th><th class="num">Abstand</th><th>Wallet</th><th>Seite</th><th class="num">Größe</th></tr></thead>
+      <tbody id="clu-btc"><tr><td colspan="6" class="skel">—</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="eyebrow"><span># · Spalte 2 · Größte Konten mit höchster Trefferquote</span><span class="snap-time">Snapshot 15.07.</span></div>
   <div class="tbl-wrap">
     <table>
       <thead><tr>
-        <th>Wallet</th><th class="num">Konto</th><th class="num">Trefferquote</th><th>Bewertung</th><th>Position</th>
+        <th>#</th><th>Wallet</th><th class="num">Konto</th><th class="num">Trefferquote</th><th>Bewertung</th><th>Position</th>
       </tr></thead>
       <tbody id="col2"></tbody>
     </table>
   </div>
 
-  <div class="eyebrow"><span>Spalte 3 · Nur Trefferquote · Größe egal</span><span class="snap-time">Snapshot 15.07.</span></div>
+  <div class="eyebrow"><span># · Spalte 3 · Nur Trefferquote · Größe egal</span><span class="snap-time">Snapshot 15.07.</span></div>
   <div class="tbl-wrap">
     <table>
       <thead><tr>
-        <th>Wallet</th><th class="num">Trefferquote</th><th class="num">Konto</th><th>Bewertung</th><th>Position</th>
+        <th>#</th><th>Wallet</th><th class="num">Trefferquote</th><th class="num">Konto</th><th>Bewertung</th><th>Position</th>
       </tr></thead>
       <tbody id="col3"></tbody>
     </table>
   </div>
   <div class="snap-note">Spalten 2 &amp; 3 sind Momentaufnahmen von HyperStats, keine Live-Daten (kein öffentliches Live-API für Trefferquote). Im Chat "Trefferquote aktualisieren" sagen, dann werden sie neu befüllt.</div>
+
+  <div class="eyebrow"><span># · Ethereum-Positionen · live (Entry / Hebel / Liq)</span></div>
+  <div class="legend">⭐ = Orientierungs-Wal: großes Konto + hohe Trefferquote (kein reiner Größen-Rang)</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>#</th><th>Wallet</th><th>Seite</th><th class="num">Größe</th>
+        <th class="num">Entry</th><th class="num">Hebel</th><th class="num">Liq-Preis</th><th class="num">uPnL</th>
+      </tr></thead>
+      <tbody id="pos-eth"><tr><td colspan="8" class="skel">Lade Positionen…</td></tr></tbody>
+    </table>
+  </div>
+
+  <div class="eyebrow"><span># · ETH Liquidations-Cluster · aus verfolgten Walen</span></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>#</th><th class="num">Liq-Preis</th><th class="num">Abstand</th><th>Wallet</th><th>Seite</th><th class="num">Größe</th></tr></thead>
+      <tbody id="clu-eth"><tr><td colspan="6" class="skel">—</td></tr></tbody>
+    </table>
+  </div>
+  <div class="snap-note">Cluster = echte Liquidationspreise deiner verfolgten Wale, sortiert nach Nähe zum aktuellen Kurs. Kein Marktweiter Wert wie Coinglass/Kiyotaka — nur deine 18 Adressen, dafür reale Zahlen statt Schätzung.</div>
 
   <div class="eyebrow"><span>Heatmaps &amp; Liquidationen · extern</span></div>
   <div class="pad">
@@ -166,7 +200,7 @@
 
 <script>
 const HL_API="https://api.hyperliquid.xyz/info";
-const COINS=["BTC","ETH","HYPE"];
+const COINS=["BTC","ETH"];
 const WHALES=[
  "0x0ddf9bae2af4b874b96d287a5ad42eb47138a902","0xd6e56265890b76413d1d527eb9b75e334c0c5b42",
  "0x7fba7e745bd97f828c824589680749b55a8c04ab","0x5b5d51203a0f9079f8aeb098a6523a13f298c060",
@@ -178,6 +212,16 @@ const WHALES=[
  "0xac487c027ffe32021bbba77e30786f8c8f353201","0x66f889094739dbb7d20aa60f645acd88feba75a9",
  "0x6daec5ff434924e0839358e710e6ae5f158590de","0xd21d931890d27b6e7e2e668f27931e17698e90f1"
 ];
+
+// Orientierungs-Wale: große Konten + hohe Trefferquote (aus HyperStats-Snapshot 15.07.), nicht nur Größe
+const PRIORITY=new Set([
+  "0x6daec5ff434924e0839358e710e6ae5f158590de", // BTC Short, $1.18M, 72.0% Trefferquote, S
+  "0xac487c027ffe32021bbba77e30786f8c8f353201", // ETH Long, $1.52M, 81.3% Trefferquote, S
+  "0xad227f63d34e7251c1d0ab65e64eeea07aee4e44", // BTC Long, $2.81M, 76.4% Trefferquote
+  "0x7fba7e745bd97f828c824589680749b55a8c04ab", // ETH Long, $4.78M, 68.4% Trefferquote, A
+  "0x0ddf9bae2af4b874b96d287a5ad42eb47138a902", // ETH Short, $15.46M, 100% Trefferquote, A+
+  "0x66f889094739dbb7d20aa60f645acd88feba75a9", // BTC Long, 92.0% Trefferquote, S
+]);
 
 const $=id=>document.getElementById(id);
 let lastData=null;
@@ -219,17 +263,17 @@ function gradeCls(g){ if(g.startsWith("S"))return "g-s"; if(["A+","A","B+","B"].
 
 function renderSnapshots(){
   const t2=$("col2"); t2.innerHTML="";
-  SNAP_COL2.forEach(r=>{
+  SNAP_COL2.forEach((r,i)=>{
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
+    tr.innerHTML=`<td>${i+1}</td><td><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
       <td class="num">${usd(r.acct)}</td><td class="num">${r.wr.toFixed(1)}%</td>
       <td><span class="grade ${gradeCls(r.grade)}">${r.grade}</span></td><td>${r.pos}</td>`;
     t2.appendChild(tr);
   });
   const t3=$("col3"); t3.innerHTML="";
-  SNAP_COL3.forEach(r=>{
+  SNAP_COL3.forEach((r,i)=>{
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
+    tr.innerHTML=`<td>${i+1}</td><td><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
       <td class="num">${r.wr.toFixed(1)}%</td><td class="num">${usd(r.acct)}</td>
       <td><span class="grade ${gradeCls(r.grade)}">${r.grade}</span></td><td>${r.pos}</td>`;
     t3.appendChild(tr);
@@ -266,7 +310,7 @@ async function loadMarket(){
 }
 
 async function loadWhales(){
-  const long={BTC:0,ETH:0,HYPE:0}, short={BTC:0,ETH:0,HYPE:0}, plist=[];
+  const long={BTC:0,ETH:0}, short={BTC:0,ETH:0}, plist=[];
   const res=await Promise.allSettled(WHALES.map(a=>hl({type:"clearinghouseState",user:a})));
   res.forEach((r,i)=>{ if(r.status!=="fulfilled")return;
     const st=r.value, addr=WHALES[i];
@@ -311,19 +355,45 @@ function renderCards(mkt,w){
   });
 }
 
-function renderPositions(w){
-  const tb=$("positions"); tb.innerHTML="";
-  if(!w.plist.length){tb.innerHTML='<tr><td colspan="8" class="skel">Keine offenen Wal-Positionen in BTC/ETH/HYPE.</td></tr>';return;}
-  w.plist.slice(0,16).forEach(p=>{
+function renderPositionsFor(coin, tbodyId){
+  const tb=$(tbodyId); tb.innerHTML="";
+  const rows=lastData.w.plist.filter(p=>p.coin===coin);
+  if(!rows.length){tb.innerHTML=`<tr><td colspan="8" class="skel">Keine offenen ${coin}-Positionen in den verfolgten Walen.</td></tr>`;return;}
+  rows.slice(0,16).forEach((p,i)=>{
     const sc=p.side==="Long"?"up":"down", uc=p.upnl>=0?"up":"down";
+    const isPriority=PRIORITY.has(p.addr);
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td><a href="https://hyperstats.org/wallet/${p.addr}" target="_blank" rel="noopener">${shortA(p.addr)}</a></td>
-      <td>${p.coin}</td><td class="side ${sc}">${p.side}</td>
+    if(isPriority) tr.className="priority-row";
+    tr.innerHTML=`<td>${i+1}</td>
+      <td>${isPriority?'<span class="star">⭐</span>':''}<a href="https://hyperstats.org/wallet/${p.addr}" target="_blank" rel="noopener">${shortA(p.addr)}</a></td>
+      <td class="side ${sc}">${p.side}</td>
       <td class="num">${usd(p.notional)}</td>
       <td class="num">${p.entry?price(p.entry):"—"}</td>
       <td class="num">${p.lev?p.lev+"x":"—"}</td>
       <td class="num">${p.liq?price(p.liq):"—"}</td>
       <td class="num ${uc}">${usd(p.upnl)}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function renderClusterFor(coin, tbodyId, currentPx){
+  const tb=$(tbodyId); tb.innerHTML="";
+  const rows=lastData.w.plist.filter(p=>p.coin===coin && p.liq);
+  if(!rows.length || !currentPx){tb.innerHTML=`<tr><td colspan="6" class="skel">Keine Liq-Daten verfügbar.</td></tr>`;return;}
+  const sorted=[...rows].sort((a,b)=>Math.abs(a.liq-currentPx)-Math.abs(b.liq-currentPx));
+  sorted.slice(0,10).forEach((p,i)=>{
+    const distPct=((p.liq-currentPx)/currentPx*100);
+    const distTxt=(distPct>=0?"+":"")+distPct.toFixed(1)+"%";
+    const close=Math.abs(distPct)<5;
+    const sc=p.side==="Long"?"up":"down";
+    const isPriority=PRIORITY.has(p.addr);
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${i+1}</td>
+      <td class="num">${price(p.liq)}</td>
+      <td class="num ${close?"dist-close":""}">${distTxt}</td>
+      <td>${isPriority?'<span class="star">⭐</span>':''}<a href="https://hyperstats.org/wallet/${p.addr}" target="_blank" rel="noopener">${shortA(p.addr)}</a></td>
+      <td class="side ${sc}">${p.side}</td>
+      <td class="num">${usd(p.notional)}</td>`;
     tb.appendChild(tr);
   });
 }
@@ -335,7 +405,12 @@ async function refresh(){
   try{
     const [mkt,w]=await Promise.all([loadMarket(),loadWhales()]);
     lastData={mkt,w};
-    renderCards(mkt,w); renderPositions(w); hideBanner();
+    renderCards(mkt,w);
+    renderPositionsFor("BTC","pos-btc");
+    renderPositionsFor("ETH","pos-eth");
+    renderClusterFor("BTC","clu-btc", mkt.BTC?mkt.BTC.price:null);
+    renderClusterFor("ETH","clu-eth", mkt.ETH?mkt.ETH.price:null);
+    hideBanner();
     $("clocktxt").textContent="Aktualisiert "+new Date().toLocaleTimeString("de-DE");
   }catch(e){
     showBanner("Live-Daten momentan nicht abrufbar ("+e.message+"). Externe Seiten unten funktionieren weiterhin.");
@@ -382,7 +457,7 @@ Nutze zusätzlich die Websuche, um die AKTUELLE Liquidations-Heatmap-Lage für B
 DATEN:
 ${JSON.stringify(data)}
 
-Erstelle auf DEUTSCH eine kompakte Desk-Lesart für BTC, ETH und HYPE (Timeframe 4h/Daily). Pro Coin GENAU dieses Format:
+Erstelle auf DEUTSCH eine kompakte Desk-Lesart für BTC und ETH (Timeframe 4h/Daily). Pro Coin GENAU dieses Format:
 ## COIN — Bias: [long-lastig/short-lastig/neutral] + ein Wort zur Verfassung
 - **Lage:** 1-2 Sätze (Wale, Funding, OI, Heatmap-Cluster)
 - **Lesart:** 1-2 Sätze — wohin zeigt der Weg des geringsten Widerstands und WARUM
