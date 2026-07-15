@@ -259,6 +259,8 @@ const TODAY_BTC=[
   {addr:"0x362ad6209a5e904a5569f69884375809c5781d9f",side:"Short",opened:"vor 23 Std.",wr:63.7,grade:"B+"},
 ];
 
+const $=id=>document.getElementById(id);
+
 function renderReco(){
   const t=$("reco"); t.innerHTML="";
   RECO.forEach((r,i)=>{
@@ -286,7 +288,6 @@ function renderReco(){
 }
 renderReco();
 
-const $=id=>document.getElementById(id);
 let lastData=null;
 
 // Snapshot von HyperStats (hyperstats.org/traders), Stand 15.07.2026 — kein Live-API verfügbar
@@ -513,7 +514,8 @@ function mdToHtml(t){
     .replace(/^### (.+)$/gm,'<div class="hl" style="font-weight:700;margin-top:10px">$1</div>')
     .replace(/^## (.+)$/gm,'<div class="hl" style="font-weight:700;font-size:15px;margin-top:12px">$1</div>')
     .replace(/^- (.+)$/gm,"• $1")
-    .replace(/\n/g,"<br>");
+    .replace(/
+/g,"<br>");
 }
 
 async function analyze(){
