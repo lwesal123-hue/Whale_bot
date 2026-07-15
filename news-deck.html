@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>News Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0E14; --panel:#141A26; --panel2:#0F141E; --line:#222C3D;
+    --ink:#E7EBF2; --mute:#8A93A6; --faint:#5C6678;
+    --long:#2ED3B7; --short:#F0616D; --warn:#F5A623; --accent:#6C8CFF; --r:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1100px 550px at 85% -10%, rgba(108,140,255,.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 12%, rgba(46,211,183,.07), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;
+    -webkit-font-smoothing:antialiased;
+    padding:16px; max-width:780px; margin:0 auto;
+  }
+  .disp{font-family:"Space Grotesk",system-ui,sans-serif}
+  a{color:inherit}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 2px 16px}
+  .mark{font-family:"Space Grotesk";font-weight:700;font-size:22px}
+  .mark b{color:var(--accent)}
+  .sub{font-size:11px;color:var(--mute);letter-spacing:.14em;text-transform:uppercase}
+  .clock{font-size:11px;color:var(--mute)}
+  button{font-family:inherit;cursor:pointer;border:1px solid var(--line);background:var(--panel);
+    color:var(--ink);border-radius:9px;padding:8px 12px;font-size:12px;transition:.15s}
+  button:hover{border-color:var(--accent)}
+  button.on{border-color:var(--accent);color:var(--accent);font-weight:700}
+  button.cta{background:linear-gradient(135deg,#26406e,#1c2f52);border-color:#3a55a0;font-weight:700}
+  button:disabled{opacity:.5;cursor:wait}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .banner{display:none;background:rgba(245,166,35,.10);border:1px solid rgba(245,166,35,.4);
+    color:#F7CE86;border-radius:10px;padding:10px 12px;font-size:12px;margin:0 0 14px;line-height:1.5}
+  .banner.show{display:block}
+  .eyebrow{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin:20px 2px 10px;display:flex;justify-content:space-between;align-items:center}
+  .filters{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}
+  .news-item{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+    border-radius:var(--r);padding:13px 15px;margin-bottom:10px;display:block;text-decoration:none;transition:.15s}
+  .news-item:hover{border-color:var(--accent)}
+  .ni-top{display:flex;gap:8px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+  .src{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);
+    border:1px solid rgba(108,140,255,.35);border-radius:6px;padding:2px 7px}
+  .tag{font-size:10px;font-weight:700;border-radius:6px;padding:2px 7px}
+  .tag-btc{background:rgba(245,166,35,.15);color:var(--warn)}
+  .tag-eth{background:rgba(108,140,255,.15);color:var(--accent)}
+  .tag-gold{background:rgba(255,215,0,.13);color:#F5D34C}
+  .tag-oil{background:rgba(240,97,109,.13);color:#F0916A}
+  .tag-idx{background:rgba(46,211,183,.13);color:var(--long)}
+  .when{font-size:10.5px;color:var(--faint);margin-left:auto}
+  .ni-title{font-family:"Space Grotesk";font-weight:600;font-size:14.5px;line-height:1.4;color:var(--ink)}
+  .ni-desc{font-size:11.5px;color:var(--mute);line-height:1.5;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .feed-status{font-size:10.5px;color:var(--faint);margin:6px 2px 0;line-height:1.5}
+  .pad{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .pad a{display:flex;flex-direction:column;gap:3px;text-decoration:none;background:var(--panel);
+    border:1px solid var(--line);border-radius:12px;padding:12px 14px;transition:.15s}
+  .pad a:hover{border-color:var(--accent)}
+  .pad .t{font-family:"Space Grotesk";font-weight:600;font-size:13.5px}
+  .pad .d{font-size:10.5px;color:var(--mute);line-height:1.4}
+  .pad .arrow{color:var(--accent)}
+  footer{margin:24px 2px 8px;font-size:11px;color:var(--faint);line-height:1.6}
+  .skel{color:var(--faint);padding:14px 2px}
+  #analysis{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+    border-radius:var(--r);padding:16px;font-size:13px;line-height:1.75;display:none;white-space:normal}
+  #analysis.show{display:block}
+  #analysis b{color:#fff}
+  #analysis .hl{color:var(--accent)}
+  @media (max-width:520px){ .pad{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="mark">News<b>Deck</b></div>
+      <div class="sub">Märkte &amp; Krypto · live · Version 4</div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+      <div class="clock" id="clocktxt">lädt…</div>
+      <div style="display:flex;gap:8px">
+        <button id="refresh">Aktualisieren</button>
+        <button id="analyze" class="cta">🧠 Lage-Analyse</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="banner" id="banner"></div>
+
+  <div class="eyebrow"><span>🔴 Top jetzt · was gerade live passiert</span></div>
+  <div id="top-now"><div class="skel">Lade…</div></div>
+
+  <div class="eyebrow"><span>Lage-Analyse</span><span id="ai-time" style="letter-spacing:0;text-transform:none"></span></div>
+  <div id="analysis"></div>
+
+  <div class="eyebrow"><span>Alle Schlagzeilen · nach Markt filterbar</span></div>
+  <div class="filters">
+    <button class="on" data-f="alle">Alle</button>
+    <button data-f="btc">Bitcoin</button>
+    <button data-f="krypto">Krypto</button>
+    <button data-f="gold">Gold</button>
+    <button data-f="oil">Öl</button>
+    <button data-f="aktien">Aktien</button>
+  </div>
+
+  <div id="news"><div class="skel">Lade Nachrichten…</div></div>
+  <div class="feed-status" id="feedstatus"></div>
+
+  <div class="eyebrow"><span>Institutionelle Investments · BlackRock &amp; Co.</span></div>
+  <div class="pad">
+    <a href="https://whalewisdom.com/filer/blackrock-inc" target="_blank" rel="noopener">
+      <div class="t">WhaleWisdom <span class="arrow">↗</span></div>
+      <div class="d">13F-Portfolios großer Fonds, kostenlos, gut aufbereitet</div></a>
+    <a href="https://fintel.io/i13f/blackrock-inc" target="_blank" rel="noopener">
+      <div class="t">Fintel <span class="arrow">↗</span></div>
+      <div class="d">Institutionelle Positionen &amp; Änderungen im Detail</div></a>
+    <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&company=blackrock&type=13F" target="_blank" rel="noopener">
+      <div class="t">SEC EDGAR <span class="arrow">↗</span></div>
+      <div class="d">Offizielle Original-Meldungen, ungefiltert</div></a>
+    <a href="https://www.tipranks.com/hedge-funds/blackrock-inc" target="_blank" rel="noopener">
+      <div class="t">TipRanks <span class="arrow">↗</span></div>
+      <div class="d">Hedgefonds- &amp; Insider-Bewegungen im Überblick</div></a>
+  </div>
+  <div class="feed-status">13F-Meldungen kommen nur vierteljährlich, mit bis zu 45 Tagen Verzögerung — es gibt keine kostenlose Live-Quelle dafür. Diese vier zeigen die jeweils aktuellste veröffentlichte Meldung.</div>
+
+  <div class="eyebrow"><span>X-Konten · Schnellzugriff</span></div>
+  <div class="pad">
+    <a href="https://x.com/WatcherGuru" target="_blank" rel="noopener">
+      <div class="t">Watcher.Guru <span class="arrow">↗</span></div>
+      <div class="d">Schnellste Breaking-News-Meldungen</div></a>
+    <a href="https://x.com/tier10k" target="_blank" rel="noopener">
+      <div class="t">db (tier10k) <span class="arrow">↗</span></div>
+      <div class="d">Newswire, oft vor allen anderen</div></a>
+    <a href="https://x.com/Tree_of_Alpha" target="_blank" rel="noopener">
+      <div class="t">Tree of Alpha <span class="arrow">↗</span></div>
+      <div class="d">Live-Reaktionen auf News &amp; Listings</div></a>
+    <a href="https://x.com/WuBlockchain" target="_blank" rel="noopener">
+      <div class="t">Wu Blockchain <span class="arrow">↗</span></div>
+      <div class="d">Asien-Flow, Mining, Regulierung</div></a>
+  </div>
+
+  <footer>
+    Quellen: BTC-ECHO, CoinDesk, Cointelegraph, The Block, CNBC, MarketWatch, Yahoo Finance, n-tv Wirtschaft.<br>
+    Bitcoin-Meldungen werden bevorzugt einsortiert. X/Twitter bietet keine kostenlose Schnittstelle — die Kacheln öffnen die Profile direkt.
+  </footer>
+
+<script>
+const FEEDS=[
+  {name:"BTC-ECHO",   url:"https://www.btc-echo.de/feed/"},
+  {name:"CoinDesk",   url:"https://www.coindesk.com/arc/outboundfeeds/rss/"},
+  {name:"Cointelegraph", url:"https://cointelegraph.com/rss"},
+  {name:"The Block",  url:"https://www.theblock.co/rss.xml"},
+  {name:"CNBC Markets", url:"https://www.cnbc.com/id/20910258/device/rss/rss.html"},
+  {name:"MarketWatch", url:"https://feeds.content.dowjones.io/public/rss/mw_topstories"},
+  {name:"Yahoo Finance", url:"https://finance.yahoo.com/news/rssindex"},
+  {name:"n-tv Wirtschaft", url:"https://www.n-tv.de/wirtschaft/rss"},
+  {name:"OilPrice.com", url:"https://oilprice.com/rss/main"},
+  {name:"Kitco News", url:"https://www.kitco.com/rss/KitcoNews.xml"},
+  {name:"Investing.com", url:"https://www.investing.com/rss/news.rss"},
+  {name:"FXStreet", url:"https://www.fxstreet.com/rss/news"},
+];
+// Zwei Umleitungs-Dienste (Feeds erlauben keinen Direktzugriff aus dem Browser); wird der erste gedrosselt, greift der zweite
+const PROXIES=[
+  u=>"https://api.allorigins.win/raw?url="+encodeURIComponent(u),
+  u=>"https://corsproxy.io/?url="+encodeURIComponent(u),
+];
+
+const $=id=>document.getElementById(id);
+let allItems=[];
+let activeFilter="alle";
+
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function stripHtml(s){const d=document.createElement("div");d.innerHTML=s||"";return d.textContent||"";}
+
+function relTime(d){
+  const diff=(Date.now()-d.getTime())/60000; // Minuten
+  if(diff<1) return "gerade eben";
+  if(diff<60) return "vor "+Math.round(diff)+" Min.";
+  if(diff<48*60) return "vor "+Math.round(diff/60)+" Std.";
+  return d.toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});
+}
+
+async function fetchWithTimeout(url,ms){
+  const ctrl=new AbortController();
+  const t=setTimeout(()=>ctrl.abort(),ms);
+  try{
+    const r=await fetch(url,{signal:ctrl.signal});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    return await r.text();
+  }finally{clearTimeout(t);}
+}
+
+async function loadFeed(feed){
+  let lastErr=null;
+  for(const proxy of PROXIES){
+    try{
+      const xml=await fetchWithTimeout(proxy(feed.url),12000);
+      const doc=new DOMParser().parseFromString(xml,"text/xml");
+      let nodes=[...doc.querySelectorAll("item")];
+      let isAtom=false;
+      if(!nodes.length){nodes=[...doc.querySelectorAll("entry")];isAtom=true;}
+      if(!nodes.length)throw new Error("kein Feed-Inhalt");
+      return nodes.slice(0,12).map(n=>{
+        const title=stripHtml(n.querySelector("title")?.textContent||"");
+        let link="";
+        if(isAtom){link=n.querySelector("link")?.getAttribute("href")||"";}
+        else{link=(n.querySelector("link")?.textContent||"").trim();}
+        const dateStr=n.querySelector(isAtom?"updated":"pubDate")?.textContent
+          || n.querySelector("published")?.textContent || "";
+        const desc=stripHtml(n.querySelector(isAtom?"summary":"description")?.textContent||"").slice(0,220);
+        const date=dateStr?new Date(dateStr):new Date(0);
+        return {src:feed.name,title,link,date,desc};
+      }).filter(i=>i.title&&i.link);
+    }catch(e){lastErr=e;}
+  }
+  throw lastErr||new Error("Feed nicht erreichbar");
+}
+
+const RE_BTC=/bitcoin|\bbtc\b/;
+const RE_ETH=/ethereum|\beth\b/;
+const RE_KRYPTO=/bitcoin|\bbtc\b|ethereum|\beth\b|crypto|krypto|blockchain|\bcoin\b|token|solana|\bxrp\b|defi|stablecoin|altcoin/;
+const RE_GOLD=/\bgold\b|goldpreis|\bxau\b|edelmetall|silber|\bsilver\b/;
+const RE_OIL=/\boil\b|\böl\b|ölpreis|crude|\bopec\b|\bwti\b|brent|barrel/;
+const RE_AKTIEN=/dow jones|\bdow\b|nasdaq|s&p|\bsp500\b|wall street|aktien|\bdax\b|\bfed\b|zinsen|zinssenkung|treasury|börse|inflation|\bstocks?\b|earnings/;
+
+function matchesFilter(item,f){
+  if(f==="alle")return true;
+  const hay=(item.title+" "+item.desc).toLowerCase();
+  if(f==="btc")return RE_BTC.test(hay);
+  if(f==="krypto")return RE_KRYPTO.test(hay);
+  if(f==="gold")return RE_GOLD.test(hay);
+  if(f==="oil")return RE_OIL.test(hay);
+  if(f==="aktien")return RE_AKTIEN.test(hay);
+  return true;
+}
+
+function tagsFor(item){
+  const hay=(item.title+" "+item.desc).toLowerCase();
+  let out="";
+  if(RE_BTC.test(hay))out+='<span class="tag tag-btc">BTC</span>';
+  else if(RE_KRYPTO.test(hay))out+='<span class="tag tag-eth">KRYPTO</span>';
+  if(RE_GOLD.test(hay))out+='<span class="tag tag-gold">GOLD</span>';
+  if(RE_OIL.test(hay))out+='<span class="tag tag-oil">ÖL</span>';
+  if(RE_AKTIEN.test(hay))out+='<span class="tag tag-idx">AKTIEN</span>';
+  return out;
+}
+
+function renderTopNow(){
+  const box=$("top-now"); box.innerHTML="";
+  // Nur Meldungen der letzten 4 Stunden, Bitcoin/Krypto/Aktien/Gold/Öl-relevant, neueste + Bitcoin-Vorrang zuerst
+  const cutoff=Date.now()-4*3600*1000;
+  const relevant=allItems.filter(i=>i.date.getTime()>=cutoff);
+  const pool=(relevant.length?relevant:allItems).slice(0,8);
+  if(!pool.length){box.innerHTML='<div class="skel">Noch keine Daten.</div>';return;}
+  pool.forEach(i=>{
+    const a=document.createElement("a");
+    a.className="news-item";a.href=i.link;a.target="_blank";a.rel="noopener";
+    a.innerHTML=`<div class="ni-top"><span class="src">${esc(i.src)}</span>${tagsFor(i)}
+        <span class="when">${relTime(i.date)}</span></div>
+      <div class="ni-title">${esc(i.title)}</div>`;
+    box.appendChild(a);
+  });
+}
+
+function render(){
+  const box=$("news");box.innerHTML="";
+  const items=allItems.filter(i=>matchesFilter(i,activeFilter)).slice(0,40);
+  if(!items.length){box.innerHTML='<div class="skel">Keine Meldungen für diesen Filter.</div>';return;}
+  items.forEach(i=>{
+    const a=document.createElement("a");
+    a.className="news-item";a.href=i.link;a.target="_blank";a.rel="noopener";
+    a.innerHTML=`<div class="ni-top"><span class="src">${esc(i.src)}</span>${tagsFor(i)}
+        <span class="when">${relTime(i.date)}</span></div>
+      <div class="ni-title">${esc(i.title)}</div>
+      ${i.desc?`<div class="ni-desc">${esc(i.desc)}</div>`:""}`;
+    box.appendChild(a);
+  });
+}
+
+function showBanner(m){const b=$("banner");b.textContent=m;b.classList.add("show");}
+function hideBanner(){$("banner").classList.remove("show");}
+
+async function refresh(){
+  $("clocktxt").textContent="lädt…";
+  const results=await Promise.allSettled(FEEDS.map(loadFeed));
+  const ok=[],fail=[];
+  results.forEach((r,i)=>{
+    if(r.status==="fulfilled"){ok.push(FEEDS[i].name);allItems=allItems.concat(r.value);}
+    else fail.push(FEEDS[i].name);
+  });
+  // Duplikate raus (gleicher Link); Sortierung: neueste zuerst, Bitcoin-Meldungen mit Vorrang (3-Std.-Bonus)
+  const seen=new Set();
+  const prio=i=>i.date.getTime()+(RE_BTC.test((i.title+" "+i.desc).toLowerCase())?3*3600*1000:0);
+  allItems=allItems.filter(i=>{if(seen.has(i.link))return false;seen.add(i.link);return true;})
+    .sort((a,b)=>prio(b)-prio(a)).slice(0,150);
+  if(ok.length){
+    hideBanner();render();renderTopNow();
+    $("clocktxt").textContent="Aktualisiert "+new Date().toLocaleTimeString("de-DE");
+    $("feedstatus").textContent=fail.length?("Nicht erreichbar gerade: "+fail.join(", ")+" — Rest ist aktuell."):"";
+  }else{
+    showBanner("Keine Nachrichtenquelle erreichbar — Verbindung prüfen oder später erneut versuchen.");
+    $("clocktxt").textContent="offline";
+    if(!allItems.length)$("news").innerHTML='<div class="skel">Keine Daten.</div>';
+  }
+}
+
+function mdToHtml(t){
+  return esc(t)
+    .replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")
+    .replace(/^### (.+)$/gm,'<div class="hl" style="font-weight:700;margin-top:10px">$1</div>')
+    .replace(/^## (.+)$/gm,'<div class="hl" style="font-weight:700;font-size:15px;margin-top:12px">$1</div>')
+    .replace(/^- (.+)$/gm,"• $1")
+    .replace(/\n/g,"<br>");
+}
+
+async function analyze(){
+  const btn=$("analyze");
+  if(!allItems.length){showBanner("Erst Nachrichten laden — tippe Aktualisieren.");return;}
+  btn.disabled=true; btn.textContent="Analysiere…";
+  const box=$("analysis"); box.classList.add("show");
+  box.innerHTML='<span class="skel">Werte aktuelle Lage aus… (ca. 20–40 Sek.)</span>';
+  try{
+    const headlines=allItems.slice(0,35).map(i=>`[${i.src}] ${i.title}`).join("\n");
+    const prompt=`Du bist ein Markt-Analyst. Hier sind die ${Math.min(35,allItems.length)} aktuellsten Schlagzeilen aus Krypto-, Aktien-, Gold-, Öl- und Wirtschaftsquellen:
+
+${headlines}
+
+Nutze zusätzlich die Websuche, um die wichtigsten Entwicklungen von heute zu bestätigen und einzuordnen (Fed-Politik, Geopolitik, große Marktbewegungen).
+
+Erstelle auf DEUTSCH eine kompakte Lage-Analyse. Format GENAU so:
+## Weltlage — [1-3 Worte zur Gesamtstimmung]
+- **Was zählt:** die 2-3 wichtigsten Entwicklungen gerade, je 1 Satz
+- **Risiko im Hintergrund:** was könnte die Lage kurzfristig kippen
+## Was das für Krypto bedeutet
+- 2-3 Sätze: wie wirkt sich die aktuelle Weltlage auf Bitcoin/Krypto aus
+
+Keine Anlageberatung-Floskeln, keine Einleitung, direkt loslegen. Zahlen als Ziffern (z.B. 65.000), nicht ausgeschrieben. Sei konkret.`;
+    const r=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:900,
+        messages:[{role:"user",content:prompt}],
+        tools:[{type:"web_search_20250305",name:"web_search"}]})});
+    const j=await r.json();
+    if(j.error)throw new Error(j.error.message||"API-Fehler");
+    const text=(j.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
+    if(!text)throw new Error("leere Antwort");
+    box.innerHTML=mdToHtml(text);
+    $("ai-time").textContent="Stand "+new Date().toLocaleTimeString("de-DE");
+  }catch(e){
+    box.innerHTML='<span style="color:var(--warn)">Analyse nicht möglich: '+esc(e.message)+
+      '.<br>Hinweis: Die Lage-Analyse funktioniert nur, wenn das Dashboard innerhalb der Claude-App geöffnet ist. Als Browser-Lesezeichen zeigt es weiterhin die Live-Nachrichten — für die Analyse frag mich im Chat mit "Weltbriefing".</span>';
+  }finally{
+    btn.disabled=false; btn.textContent="🧠 Lage-Analyse";
+  }
+}
+
+document.querySelectorAll(".filters button").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll(".filters button").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on");activeFilter=b.dataset.f;render();
+  };
+});
+$("refresh").onclick=refresh;
+$("analyze").onclick=analyze;
+refresh();
+setInterval(refresh,5*60000); // alle 5 Minuten
+</script>
+</body>
+</html>
