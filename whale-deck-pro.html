@@ -112,6 +112,27 @@
   <div class="eyebrow"><span>Märkte · Wal-Positionierung</span></div>
   <div class="cards" id="cards"><div class="card skel">Lade Marktdaten…</div></div>
 
+  <div class="eyebrow"><span># · Empfehlung · woran orientieren</span><span class="snap-time">Snapshot 15.07.</span></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>#</th><th>Coin</th><th>Wallet</th><th>Seite</th><th>Geöffnet</th><th class="num">Trefferquote</th><th>Bewertung</th><th>Hinweis</th>
+      </tr></thead>
+      <tbody id="reco"></tbody>
+    </table>
+  </div>
+  <div class="snap-note">Trefferquote ist historisch (abgeschlossene Trades). Sie sagt nicht, ob die aktuell offene Position richtig liegt — schau dafür auf das uPnL in der Live-Tabelle darunter.</div>
+
+  <div class="eyebrow"><span># · Heute geöffnet · Bitcoin</span><span class="snap-time">Snapshot 15.07.</span></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>#</th><th>Wallet</th><th>Seite</th><th>Geöffnet</th><th class="num">Trefferquote</th><th>Bewertung</th>
+      </tr></thead>
+      <tbody id="today-btc"></tbody>
+    </table>
+  </div>
+
   <div class="eyebrow"><span>Desk-Lesart</span><span id="ai-time" style="letter-spacing:0;text-transform:none"></span></div>
   <div id="analysis"></div>
 
@@ -222,6 +243,48 @@ const PRIORITY=new Set([
   "0x0ddf9bae2af4b874b96d287a5ad42eb47138a902", // ETH Short, $15.46M, 100% Trefferquote, A+
   "0x66f889094739dbb7d20aa60f645acd88feba75a9", // BTC Long, 92.0% Trefferquote, S
 ]);
+
+// Empfehlung: woran orientieren (aus HyperStats-Snapshot 15.07.2026, mit Öffnungsdatum)
+const RECO=[
+  {addr:"0x6daec5ff434924e0839358e710e6ae5f158590de",coin:"BTC",side:"Short",opened:"vor 9 Tagen (06.07.)",wr:72.0,grade:"S",note:"Beste Kombi Größe+Quote+Bestand bei BTC"},
+  {addr:"0xac487c027ffe32021bbba77e30786f8c8f353201",coin:"ETH",side:"Long",opened:"vor 9 Tagen (06.07.)",wr:81.3,grade:"S",note:"Konsistenteste ETH-Adresse"},
+  {addr:"0x0ddf9bae2af4b874b96d287a5ad42eb47138a902",coin:"ETH",side:"Short",opened:"vor 17 Tagen (28.06.)",wr:100.0,grade:"A+",note:"Größte Adresse, aber laufende Position aktuell im Minus"},
+  {addr:"0x7fba7e745bd97f828c824589680749b55a8c04ab",coin:"ETH",side:"Long",opened:"vor 5 Tagen (10.07.)",wr:68.4,grade:"A",note:"Solide, kleinere Historie"},
+  {addr:"0x66f889094739dbb7d20aa60f645acd88feba75a9",coin:"BTC",side:"Long",opened:"vor 4 Tagen (11.07.)",wr:92.0,grade:"S",note:"Höchste BTC-Trefferquote, Konto noch klein"},
+];
+const TODAY_BTC=[
+  {addr:"0xb7e0b9fbc9479330d70bcc82a7d4325a20e8d1aa",side:"Long",opened:"heute",wr:68.6,grade:"S+"},
+  {addr:"0x218a65e21eddeece7a9df38c6bbdd89f692b7da2",side:"Short",opened:"heute",wr:37.6,grade:"S+"},
+  {addr:"0xa1830e8d9f019feb448478a171bb37cc6c4c0482",side:"Long",opened:"heute",wr:41.7,grade:"D"},
+  {addr:"0x362ad6209a5e904a5569f69884375809c5781d9f",side:"Short",opened:"vor 23 Std.",wr:63.7,grade:"B+"},
+];
+
+function renderReco(){
+  const t=$("reco"); t.innerHTML="";
+  RECO.forEach((r,i)=>{
+    const sc=r.side==="Long"?"up":"down";
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${i+1}</td><td>${r.coin}</td>
+      <td><span class="star">⭐</span><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
+      <td class="side ${sc}">${r.side}</td><td>${r.opened}</td>
+      <td class="num">${r.wr.toFixed(1)}%</td>
+      <td><span class="grade ${gradeCls(r.grade)}">${r.grade}</span></td>
+      <td style="font-size:10.5px;color:var(--mute)">${r.note}</td>`;
+    t.appendChild(tr);
+  });
+  const tt=$("today-btc"); tt.innerHTML="";
+  TODAY_BTC.forEach((r,i)=>{
+    const sc=r.side==="Long"?"up":"down";
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${i+1}</td>
+      <td><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
+      <td class="side ${sc}">${r.side}</td><td>${r.opened}</td>
+      <td class="num">${r.wr.toFixed(1)}%</td>
+      <td><span class="grade ${gradeCls(r.grade)}">${r.grade}</span></td>`;
+    tt.appendChild(tr);
+  });
+}
+renderReco();
 
 const $=id=>document.getElementById(id);
 let lastData=null;
