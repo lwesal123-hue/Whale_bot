@@ -514,8 +514,7 @@ function mdToHtml(t){
     .replace(/^### (.+)$/gm,'<div class="hl" style="font-weight:700;margin-top:10px">$1</div>')
     .replace(/^## (.+)$/gm,'<div class="hl" style="font-weight:700;font-size:15px;margin-top:12px">$1</div>')
     .replace(/^- (.+)$/gm,"• $1")
-    .replace(/
-/g,"<br>");
+    .replace(/\n/g,"<br>");
 }
 
 async function analyze(){
