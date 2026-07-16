@@ -82,7 +82,7 @@
   <header>
     <div>
       <div class="mark">News<b>Deck</b></div>
-      <div class="sub">Märkte &amp; Krypto · live · Version 6</div>
+      <div class="sub">Märkte &amp; Krypto · live · Version 7</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
       <div class="clock" id="clocktxt">lädt…</div>
@@ -156,7 +156,7 @@
   <footer>
     Quellen: BTC-ECHO, CoinDesk, Cointelegraph, The Block, CNBC, MarketWatch, Yahoo Finance, n-tv Wirtschaft.<br>
     Bitcoin-Meldungen werden bevorzugt einsortiert. X/Twitter bietet keine kostenlose Schnittstelle — die Kacheln öffnen die Profile direkt.<br>
-    Überschriften werden automatisch ins Deutsche übersetzt (kostenloser Dienst, Qualität variiert). Ein Tipp auf eine Meldung öffnet immer das englische Original.
+    Überschriften werden im Original (meist Englisch) gezeigt — automatische Übersetzung ist deaktiviert.
   </footer>
 
 <script>
@@ -324,8 +324,7 @@ function render(){
     a.innerHTML=`<div class="ni-top"><span class="src">${esc(i.src)}</span>${tagsFor(i)}
         <span class="when">${relTime(i.date)}</span></div>
       <div class="ni-title">${esc(titleShown)}</div>
-      ${descShown?`<div class="ni-desc">${esc(descShown)}</div>`:""}
-      <div class="orig-link">Original (Englisch) öffnen ↗</div>`;
+      ${descShown?`<div class="ni-desc">${esc(descShown)}</div>`:""}`;
     box.appendChild(a);
   });
 }
@@ -350,11 +349,7 @@ async function refresh(){
     hideBanner();render();renderTopNow();
     $("clocktxt").textContent="Aktualisiert "+new Date().toLocaleTimeString("de-DE");
     $("feedstatus").textContent=fail.length?("Nicht erreichbar gerade: "+fail.join(", ")+" — Rest ist aktuell."):"";
-    // Übersetzung im Hintergrund nachladen (blockiert die Anzeige nicht), dann still aktualisieren
-    const toTranslate=allItems.slice(0,60).filter(i=>i.titleDe===undefined);
-    if(toTranslate.length){
-      translateBatch(toTranslate).then(()=>{render();renderTopNow();});
-    }
+    // Automatische Übersetzung deaktiviert (kostenloser Dienst war unzuverlässig) — Original-Sprache wird gezeigt
   }else{
     showBanner("Keine Nachrichtenquelle erreichbar — Verbindung prüfen oder später erneut versuchen.");
     $("clocktxt").textContent="offline";
