@@ -59,6 +59,7 @@
   .when{font-size:10.5px;color:var(--faint);margin-left:auto}
   .ni-title{font-family:"Space Grotesk";font-weight:600;font-size:14.5px;line-height:1.4;color:var(--ink)}
   .ni-desc{font-size:11.5px;color:var(--mute);line-height:1.5;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .orig-link{font-size:10px;color:var(--accent);margin-top:6px;opacity:.75}
   .feed-status{font-size:10.5px;color:var(--faint);margin:6px 2px 0;line-height:1.5}
   .pad{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .pad a{display:flex;flex-direction:column;gap:3px;text-decoration:none;background:var(--panel);
@@ -81,7 +82,7 @@
   <header>
     <div>
       <div class="mark">News<b>Deck</b></div>
-      <div class="sub">Märkte &amp; Krypto · live · Version 4</div>
+      <div class="sub">Märkte &amp; Krypto · live · Version 6</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
       <div class="clock" id="clocktxt">lädt…</div>
@@ -144,11 +145,18 @@
     <a href="https://x.com/WuBlockchain" target="_blank" rel="noopener">
       <div class="t">Wu Blockchain <span class="arrow">↗</span></div>
       <div class="d">Asien-Flow, Mining, Regulierung</div></a>
+    <a href="https://x.com/DeItaone" target="_blank" rel="noopener">
+      <div class="t">Walter Bloomberg <span class="arrow">↗</span></div>
+      <div class="d">Makro- &amp; Breaking-News-Schlagzeilen</div></a>
+    <a href="https://x.com/CryptoBullet1" target="_blank" rel="noopener">
+      <div class="t">CryptoBullet <span class="arrow">↗</span></div>
+      <div class="d">Trader &amp; Markt-Analyst</div></a>
   </div>
 
   <footer>
     Quellen: BTC-ECHO, CoinDesk, Cointelegraph, The Block, CNBC, MarketWatch, Yahoo Finance, n-tv Wirtschaft.<br>
-    Bitcoin-Meldungen werden bevorzugt einsortiert. X/Twitter bietet keine kostenlose Schnittstelle — die Kacheln öffnen die Profile direkt.
+    Bitcoin-Meldungen werden bevorzugt einsortiert. X/Twitter bietet keine kostenlose Schnittstelle — die Kacheln öffnen die Profile direkt.<br>
+    Überschriften werden automatisch ins Deutsche übersetzt (kostenloser Dienst, Qualität variiert). Ein Tipp auf eine Meldung öffnet immer das englische Original.
   </footer>
 
 <script>
@@ -223,6 +231,40 @@ async function loadFeed(feed){
   throw lastErr||new Error("Feed nicht erreichbar");
 }
 
+// ---- Automatische Übersetzung (kostenlos, MyMemory-API) ----
+const translateCache=new Map(); // Original-Text -> Deutsche Übersetzung
+async function translateOne(text){
+  if(!text)return "";
+  if(translateCache.has(text))return translateCache.get(text);
+  const ctrl=new AbortController();
+  const t=setTimeout(()=>ctrl.abort(),8000);
+  try{
+    const url="https://api.mymemory.translated.net/get?q="+encodeURIComponent(text)+"&langpair=en|de";
+    const r=await fetch(url,{signal:ctrl.signal});
+    const j=await r.json();
+    const out=j?.responseData?.translatedText;
+    const clean=(out && out.length>2) ? out : text; // Fallback: Original, falls Übersetzung leer/fehlerhaft
+    translateCache.set(text,clean);
+    return clean;
+  }catch(e){
+    return text; // Fallback: Original zeigen statt Fehler
+  }finally{clearTimeout(t);}
+}
+
+async function translateBatch(items){
+  // Begrenzte Parallelität (5 gleichzeitig), damit die kostenlose API nicht überlastet wird
+  const queue=[...items];
+  const workers=Array.from({length:5},async()=>{
+    while(queue.length){
+      const item=queue.shift();
+      if(!item)continue;
+      const [tDe,dDe]=await Promise.all([translateOne(item.title),translateOne(item.desc)]);
+      item.titleDe=tDe; item.descDe=dDe;
+    }
+  });
+  await Promise.allSettled(workers);
+}
+
 const RE_BTC=/bitcoin|\bbtc\b/;
 const RE_ETH=/ethereum|\beth\b/;
 const RE_KRYPTO=/bitcoin|\bbtc\b|ethereum|\beth\b|crypto|krypto|blockchain|\bcoin\b|token|solana|\bxrp\b|defi|stablecoin|altcoin/;
@@ -262,9 +304,10 @@ function renderTopNow(){
   pool.forEach(i=>{
     const a=document.createElement("a");
     a.className="news-item";a.href=i.link;a.target="_blank";a.rel="noopener";
+    const titleShown=i.titleDe||i.title;
     a.innerHTML=`<div class="ni-top"><span class="src">${esc(i.src)}</span>${tagsFor(i)}
         <span class="when">${relTime(i.date)}</span></div>
-      <div class="ni-title">${esc(i.title)}</div>`;
+      <div class="ni-title">${esc(titleShown)}</div>`;
     box.appendChild(a);
   });
 }
@@ -276,10 +319,13 @@ function render(){
   items.forEach(i=>{
     const a=document.createElement("a");
     a.className="news-item";a.href=i.link;a.target="_blank";a.rel="noopener";
+    const titleShown=i.titleDe||i.title;
+    const descShown=i.descDe||i.desc;
     a.innerHTML=`<div class="ni-top"><span class="src">${esc(i.src)}</span>${tagsFor(i)}
         <span class="when">${relTime(i.date)}</span></div>
-      <div class="ni-title">${esc(i.title)}</div>
-      ${i.desc?`<div class="ni-desc">${esc(i.desc)}</div>`:""}`;
+      <div class="ni-title">${esc(titleShown)}</div>
+      ${descShown?`<div class="ni-desc">${esc(descShown)}</div>`:""}
+      <div class="orig-link">Original (Englisch) öffnen ↗</div>`;
     box.appendChild(a);
   });
 }
@@ -304,6 +350,11 @@ async function refresh(){
     hideBanner();render();renderTopNow();
     $("clocktxt").textContent="Aktualisiert "+new Date().toLocaleTimeString("de-DE");
     $("feedstatus").textContent=fail.length?("Nicht erreichbar gerade: "+fail.join(", ")+" — Rest ist aktuell."):"";
+    // Übersetzung im Hintergrund nachladen (blockiert die Anzeige nicht), dann still aktualisieren
+    const toTranslate=allItems.slice(0,60).filter(i=>i.titleDe===undefined);
+    if(toTranslate.length){
+      translateBatch(toTranslate).then(()=>{render();renderTopNow();});
+    }
   }else{
     showBanner("Keine Nachrichtenquelle erreichbar — Verbindung prüfen oder später erneut versuchen.");
     $("clocktxt").textContent="offline";
