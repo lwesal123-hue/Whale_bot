@@ -96,7 +96,7 @@
   <header>
     <div>
       <div class="mark">Whale<b>Deck</b> Pro</div>
-      <div class="sub">Hyperliquid · live · Version 4</div>
+      <div class="sub">Hyperliquid · live · Version 5</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
       <div class="clock" id="clocktxt">lädt…</div>
@@ -132,6 +132,18 @@
       <tbody id="today-btc"></tbody>
     </table>
   </div>
+
+  <div class="eyebrow"><span>⭐ Orientierungs-Wale · live uPnL</span></div>
+  <div class="legend">Nur die Sterne aus der Liste unten — kein Scrollen nötig, um zu sehen, ob sie gerade gewinnen oder verlieren.</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>#</th><th>Wallet</th><th>Coin</th><th>Seite</th><th class="num">Größe</th><th class="num">Liq-Preis</th><th class="num">uPnL</th>
+      </tr></thead>
+      <tbody id="starred"><tr><td colspan="7" class="skel">Lade Positionen…</td></tr></tbody>
+    </table>
+  </div>
+  <div class="snap-note" id="starred-summary"></div>
 
   <div class="eyebrow"><span>Desk-Lesart</span><span id="ai-time" style="letter-spacing:0;text-transform:none"></span></div>
   <div id="analysis"></div>
@@ -471,6 +483,27 @@ function renderClusterFor(coin, tbodyId, currentPx){
   });
 }
 
+function renderStarred(){
+  const tb=$("starred"); tb.innerHTML="";
+  const rows=lastData.w.plist.filter(p=>PRIORITY.has(p.addr));
+  if(!rows.length){tb.innerHTML='<tr><td colspan="7" class="skel">Keine der Orientierungs-Wale hat gerade eine offene BTC/ETH-Position.</td></tr>';$("starred-summary").textContent="";return;}
+  const sorted=[...rows].sort((a,b)=>b.notional-a.notional);
+  sorted.forEach((p,i)=>{
+    const sc=p.side==="Long"?"up":"down", uc=p.upnl>=0?"up":"down";
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${i+1}</td>
+      <td><span class="star">⭐</span><a href="https://hyperstats.org/wallet/${p.addr}" target="_blank" rel="noopener">${shortA(p.addr)}</a></td>
+      <td>${p.coin}</td><td class="side ${sc}">${p.side}</td>
+      <td class="num">${usd(p.notional)}</td>
+      <td class="num">${p.liq?price(p.liq):"—"}</td>
+      <td class="num ${uc}">${usd(p.upnl)}</td>`;
+    tb.appendChild(tr);
+  });
+  const plus=sorted.filter(p=>p.upnl>=0).length, minus=sorted.length-plus;
+  const sumUpnl=sorted.reduce((s,p)=>s+p.upnl,0);
+  const sumTxt=sumUpnl>=0?"insgesamt im Plus":"insgesamt im Minus";
+  $("starred-summary").textContent=`${plus} von ${sorted.length} im Plus, ${minus} im Minus — Summe ${usd(sumUpnl)} (${sumTxt}).`;
+}
 function showBanner(m){const b=$("banner");b.textContent=m;b.classList.add("show");}
 function hideBanner(){$("banner").classList.remove("show");}
 
@@ -480,6 +513,7 @@ async function refresh(){
     const [mkt,w]=await Promise.race([Promise.all([loadMarket(),loadWhales()]), overallTimeout]);
     lastData={mkt,w};
     renderCards(mkt,w);
+    renderStarred();
     renderPositionsFor("BTC","pos-btc");
     renderPositionsFor("ETH","pos-eth");
     renderClusterFor("BTC","clu-btc", mkt.BTC?mkt.BTC.price:null);
