@@ -96,7 +96,7 @@
   <header>
     <div>
       <div class="mark">Whale<b>Deck</b> Pro</div>
-      <div class="sub">Hyperliquid · live · Version 5</div>
+      <div class="sub">Hyperliquid · live · Version 6</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
       <div class="clock" id="clocktxt">lädt…</div>
@@ -243,17 +243,24 @@ const WHALES=[
  "0xa312114b5795dff9b8db50474dd57701aa78ad1e","0x8af700ba841f30e0a3fcb0ee4c4a9d223e1efa05",
  "0xad227f63d34e7251c1d0ab65e64eeea07aee4e44","0x6859da14835424957a1e6b397d8026b1d9ff7e1e",
  "0xac487c027ffe32021bbba77e30786f8c8f353201","0x66f889094739dbb7d20aa60f645acd88feba75a9",
- "0x6daec5ff434924e0839358e710e6ae5f158590de","0xd21d931890d27b6e7e2e668f27931e17698e90f1"
+ "0x6daec5ff434924e0839358e710e6ae5f158590de","0xd21d931890d27b6e7e2e668f27931e17698e90f1",
+ "0xb1ec7febea4f841d525785955b7fe0e812d6e86a","0x9c2a2a966ed8e47f0c8b7e2ec2b91424f229f6a8",
+ "0x362ad6209a5e904a5569f69884375809c5781d9f"
 ];
 
 // Orientierungs-Wale: große Konten + hohe Trefferquote (aus HyperStats-Snapshot 15.07.), nicht nur Größe
 const PRIORITY=new Set([
-  "0x6daec5ff434924e0839358e710e6ae5f158590de", // BTC Short, $1.18M, 72.0% Trefferquote, S
+  // Aktualisiert 17.07.2026 aus HyperStats-Rangliste — Mischung aus Bewertung, Trefferquote, Größe
+  "0x0ddf9bae2af4b874b96d287a5ad42eb47138a902", // ETH Short, $12.15M, 100% Trefferquote, A+
+  "0xb1ec7febea4f841d525785955b7fe0e812d6e86a", // BTC Long, $2.36M, 91.6% Trefferquote, S+
+  "0xcf5343ba750a6e30afbb1dadda08bc78f8c8ee11", // ETH Short, $3.60M, 100% Trefferquote, S
+  "0x9c2a2a966ed8e47f0c8b7e2ec2b91424f229f6a8", // BTC Short, $1.23M, 72.6% Trefferquote, S
+  "0x362ad6209a5e904a5569f69884375809c5781d9f", // BTC Short, $2.00M, 72.0% Trefferquote, A+
+  "0x6859da14835424957a1e6b397d8026b1d9ff7e1e", // BTC Short 85%, $2.55M, 56.8% Trefferquote, A+
+  "0x7fba7e745bd97f828c824589680749b55a8c04ab", // ETH Long, $4.93M, 68.4% Trefferquote, A
+  "0x6daec5ff434924e0839358e710e6ae5f158590de", // BTC Short, $1.59M, 72.0% Trefferquote, S
   "0xac487c027ffe32021bbba77e30786f8c8f353201", // ETH Long, $1.52M, 81.3% Trefferquote, S
-  "0xad227f63d34e7251c1d0ab65e64eeea07aee4e44", // BTC Long, $2.81M, 76.4% Trefferquote
-  "0x7fba7e745bd97f828c824589680749b55a8c04ab", // ETH Long, $4.78M, 68.4% Trefferquote, A
-  "0x0ddf9bae2af4b874b96d287a5ad42eb47138a902", // ETH Short, $15.46M, 100% Trefferquote, A+
-  "0x66f889094739dbb7d20aa60f645acd88feba75a9", // BTC Long, 92.0% Trefferquote, S
+  "0x218a65e21eddeece7a9df38c6bbdd89f692b7da2", // BTC Short, $4.25M, 37.6% Trefferquote, S+ (groß, niedrigere Quote)
 ]);
 
 // Empfehlung: woran orientieren (aus HyperStats-Snapshot 15.07.2026, mit Öffnungsdatum)
