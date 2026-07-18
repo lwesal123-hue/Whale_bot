@@ -81,6 +81,21 @@
   .skel{color:var(--faint)}
   .snap-time{font-size:10px;color:var(--faint);letter-spacing:0;text-transform:none}
   .snap-note{font-size:10.5px;color:var(--faint);line-height:1.5;margin:-4px 2px 6px;padding:0 2px}
+  .sumbox{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+    border-radius:12px;padding:12px 14px;margin:2px 2px 8px;font-size:13.5px;line-height:1.7}
+  .sumbox .row{display:flex;justify-content:space-between;gap:10px}
+  .sumbox .verdict{margin-top:7px;padding-top:7px;border-top:1px solid var(--line);font-weight:700;font-size:14px}
+  #verdict-top{margin:2px 2px 14px}
+  .vcard{border-radius:14px;padding:14px 16px;margin-bottom:8px;border:1px solid var(--line);
+    background:linear-gradient(180deg,var(--panel),var(--panel2))}
+  .vcard .vhead{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+  .vcard .vmain{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:22px;line-height:1.2}
+  .vcard .vsub{font-size:12px;color:var(--mute);margin-top:5px;line-height:1.5}
+  .vcard.long{border-color:rgba(46,211,183,.5);background:linear-gradient(180deg,rgba(46,211,183,.10),var(--panel2))}
+  .vcard.short{border-color:rgba(240,97,109,.5);background:linear-gradient(180deg,rgba(240,97,109,.10),var(--panel2))}
+  .vcard.long .vmain{color:var(--long)}
+  .vcard.short .vmain{color:var(--short)}
+  .vcard.neutral .vmain{color:var(--warn)}
   .grade{font-weight:700;padding:2px 7px;border-radius:6px;font-size:11px}
   .g-s{background:rgba(46,211,183,.15);color:var(--long)}
   .g-mid{background:rgba(245,166,35,.15);color:var(--warn)}
@@ -96,7 +111,7 @@
   <header>
     <div>
       <div class="mark">Whale<b>Deck</b> Pro</div>
-      <div class="sub">Hyperliquid · live · Version 6</div>
+      <div class="sub">Hyperliquid · live · Version 8</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
       <div class="clock" id="clocktxt">lädt…</div>
@@ -109,41 +124,54 @@
 
   <div class="banner" id="banner"></div>
 
+  <div id="verdict-top"><div class="skel" style="padding:14px">Lade Empfehlung…</div></div>
+
   <div class="eyebrow"><span>Märkte · Wal-Positionierung</span></div>
   <div class="cards" id="cards"><div class="card skel">Lade Marktdaten…</div></div>
 
-  <div class="eyebrow"><span># · Empfehlung · woran orientieren</span><span class="snap-time">Snapshot 15.07.</span></div>
+  <div class="eyebrow"><span># · Empfehlung · woran orientieren</span><span class="snap-time">live</span></div>
   <div class="tbl-wrap">
     <table>
       <thead><tr>
-        <th>#</th><th>Coin</th><th>Wallet</th><th>Seite</th><th>Geöffnet</th><th class="num">Trefferquote</th><th>Bewertung</th><th>Hinweis</th>
+        <th>#</th><th>Coin</th><th>Wallet</th><th>Seite</th><th>Geöffnet</th><th class="num">Entry</th><th class="num">uPnL</th><th class="num">Quote</th><th>Bew.</th>
       </tr></thead>
       <tbody id="reco"></tbody>
     </table>
   </div>
-  <div class="snap-note">Trefferquote ist historisch (abgeschlossene Trades). Sie sagt nicht, ob die aktuell offene Position richtig liegt — schau dafür auf das uPnL in der Live-Tabelle darunter.</div>
+  <div class="snap-note">Entry &amp; uPnL sind live. Trefferquote/Bewertung sind historisch (Snapshot). Geöffnet-Datum aus Snapshot 15.07.</div>
 
-  <div class="eyebrow"><span># · Heute geöffnet · Bitcoin</span><span class="snap-time">Snapshot 15.07.</span></div>
+  <div class="eyebrow"><span># · Heute geöffnet · Bitcoin</span><span class="snap-time">live uPnL</span></div>
   <div class="tbl-wrap">
     <table>
       <thead><tr>
-        <th>#</th><th>Wallet</th><th>Seite</th><th>Geöffnet</th><th class="num">Trefferquote</th><th>Bewertung</th>
+        <th>#</th><th>Wallet</th><th>Seite</th><th>Geöffnet</th><th class="num">Entry</th><th class="num">uPnL</th><th class="num">Quote</th><th>Bew.</th>
       </tr></thead>
       <tbody id="today-btc"></tbody>
     </table>
   </div>
 
-  <div class="eyebrow"><span>⭐ Orientierungs-Wale · live uPnL</span></div>
-  <div class="legend">Nur die Sterne aus der Liste unten — kein Scrollen nötig, um zu sehen, ob sie gerade gewinnen oder verlieren.</div>
+  <div class="eyebrow"><span>⭐ Orientierungs-Wale · Bitcoin · live uPnL</span></div>
+  <div class="legend">Nur die Sterne — kompakt, uPnL ohne Scrollen sichtbar.</div>
   <div class="tbl-wrap">
     <table>
       <thead><tr>
-        <th>#</th><th>Wallet</th><th>Coin</th><th>Seite</th><th class="num">Größe</th><th class="num">Liq-Preis</th><th class="num">uPnL</th>
+        <th>Wallet</th><th>Seite</th><th class="num">Größe</th><th class="num">uPnL</th>
       </tr></thead>
-      <tbody id="starred"><tr><td colspan="7" class="skel">Lade Positionen…</td></tr></tbody>
+      <tbody id="starred-btc"><tr><td colspan="4" class="skel">Lade…</td></tr></tbody>
     </table>
   </div>
-  <div class="snap-note" id="starred-summary"></div>
+  <div class="sumbox" id="sum-btc"></div>
+
+  <div class="eyebrow"><span>⭐ Orientierungs-Wale · Ethereum · live uPnL</span></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr>
+        <th>Wallet</th><th>Seite</th><th class="num">Größe</th><th class="num">uPnL</th>
+      </tr></thead>
+      <tbody id="starred-eth"><tr><td colspan="4" class="skel">Lade…</td></tr></tbody>
+    </table>
+  </div>
+  <div class="sumbox" id="sum-eth"></div>
 
   <div class="eyebrow"><span>Desk-Lesart</span><span id="ai-time" style="letter-spacing:0;text-transform:none"></span></div>
   <div id="analysis"></div>
@@ -278,26 +306,46 @@ const TODAY_BTC=[
   {addr:"0x362ad6209a5e904a5569f69884375809c5781d9f",side:"Short",opened:"vor 23 Std.",wr:63.7,grade:"B+"},
 ];
 
+const GRADE_RANK={"S+":0,"S":1,"A+":2,"A":3,"B+":4,"B":5,"C":6,"D":7,"F":8};
+
+function liveFor(addr, coin){
+  // findet die Live-Position einer Adresse (optional für bestimmten Coin)
+  if(!lastData||!lastData.w||!lastData.w.plist)return null;
+  const matches=lastData.w.plist.filter(p=>p.addr===addr && (!coin||p.coin===coin));
+  if(!matches.length)return null;
+  // größte Position nehmen, falls mehrere
+  return matches.sort((a,b)=>b.notional-a.notional)[0];
+}
+
 function renderReco(){
   const t=$("reco"); t.innerHTML="";
   RECO.forEach((r,i)=>{
     const sc=r.side==="Long"?"up":"down";
+    const live=liveFor(r.addr, r.coin);
+    const entry=live&&live.entry?price(live.entry):"—";
+    const upnl=live?`<span class="${live.upnl>=0?'up':'down'}">${usd(live.upnl)}</span>`:"—";
     const tr=document.createElement("tr");
     tr.innerHTML=`<td>${i+1}</td><td>${r.coin}</td>
       <td><span class="star">⭐</span><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
       <td class="side ${sc}">${r.side}</td><td>${r.opened}</td>
+      <td class="num">${entry}</td>
+      <td class="num">${upnl}</td>
       <td class="num">${r.wr.toFixed(1)}%</td>
-      <td><span class="grade ${gradeCls(r.grade)}">${r.grade}</span></td>
-      <td style="font-size:10.5px;color:var(--mute)">${r.note}</td>`;
+      <td><span class="grade ${gradeCls(r.grade)}">${r.grade}</span></td>`;
     t.appendChild(tr);
   });
   const tt=$("today-btc"); tt.innerHTML="";
   TODAY_BTC.forEach((r,i)=>{
     const sc=r.side==="Long"?"up":"down";
+    const live=liveFor(r.addr, "BTC");
+    const entry=live&&live.entry?price(live.entry):"—";
+    const upnl=live?`<span class="${live.upnl>=0?'up':'down'}">${usd(live.upnl)}</span>`:"—";
     const tr=document.createElement("tr");
     tr.innerHTML=`<td>${i+1}</td>
       <td><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
       <td class="side ${sc}">${r.side}</td><td>${r.opened}</td>
+      <td class="num">${entry}</td>
+      <td class="num">${upnl}</td>
       <td class="num">${r.wr.toFixed(1)}%</td>
       <td><span class="grade ${gradeCls(r.grade)}">${r.grade}</span></td>`;
     tt.appendChild(tr);
@@ -344,8 +392,9 @@ const SNAP_COL3=[ // Reine Trefferquote, Größe egal
 function gradeCls(g){ if(g.startsWith("S"))return "g-s"; if(["A+","A","B+","B"].includes(g))return "g-mid"; return "g-low"; }
 
 function renderSnapshots(){
+  const byGrade=(a,b)=>(GRADE_RANK[a.grade]??9)-(GRADE_RANK[b.grade]??9);
   const t2=$("col2"); t2.innerHTML="";
-  SNAP_COL2.forEach((r,i)=>{
+  [...SNAP_COL2].sort(byGrade).forEach((r,i)=>{
     const tr=document.createElement("tr");
     tr.innerHTML=`<td>${i+1}</td><td><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
       <td class="num">${usd(r.acct)}</td><td class="num">${r.wr.toFixed(1)}%</td>
@@ -353,7 +402,7 @@ function renderSnapshots(){
     t2.appendChild(tr);
   });
   const t3=$("col3"); t3.innerHTML="";
-  SNAP_COL3.forEach((r,i)=>{
+  [...SNAP_COL3].sort(byGrade).forEach((r,i)=>{
     const tr=document.createElement("tr");
     tr.innerHTML=`<td>${i+1}</td><td><a href="https://hyperstats.org/wallet/${r.addr}" target="_blank" rel="noopener">${shortA(r.addr)}</a></td>
       <td class="num">${r.wr.toFixed(1)}%</td><td class="num">${usd(r.acct)}</td>
@@ -490,27 +539,93 @@ function renderClusterFor(coin, tbodyId, currentPx){
   });
 }
 
-function renderStarred(){
-  const tb=$("starred"); tb.innerHTML="";
-  const rows=lastData.w.plist.filter(p=>PRIORITY.has(p.addr));
-  if(!rows.length){tb.innerHTML='<tr><td colspan="7" class="skel">Keine der Orientierungs-Wale hat gerade eine offene BTC/ETH-Position.</td></tr>';$("starred-summary").textContent="";return;}
+function renderStarredFor(coin, tbodyId, sumId){
+  const tb=$(tbodyId); tb.innerHTML="";
+  const rows=lastData.w.plist.filter(p=>PRIORITY.has(p.addr) && p.coin===coin);
+  if(!rows.length){tb.innerHTML=`<tr><td colspan="4" class="skel">Keine Orientierungs-Wale mit offener ${coin}-Position.</td></tr>`;$(sumId).innerHTML="";return;}
   const sorted=[...rows].sort((a,b)=>b.notional-a.notional);
-  sorted.forEach((p,i)=>{
+  sorted.forEach(p=>{
     const sc=p.side==="Long"?"up":"down", uc=p.upnl>=0?"up":"down";
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${i+1}</td>
-      <td><span class="star">⭐</span><a href="https://hyperstats.org/wallet/${p.addr}" target="_blank" rel="noopener">${shortA(p.addr)}</a></td>
-      <td>${p.coin}</td><td class="side ${sc}">${p.side}</td>
+    tr.innerHTML=`<td><span class="star">⭐</span><a href="https://hyperstats.org/wallet/${p.addr}" target="_blank" rel="noopener">${shortA(p.addr)}</a></td>
+      <td class="side ${sc}">${p.side}</td>
       <td class="num">${usd(p.notional)}</td>
-      <td class="num">${p.liq?price(p.liq):"—"}</td>
       <td class="num ${uc}">${usd(p.upnl)}</td>`;
     tb.appendChild(tr);
   });
-  const plus=sorted.filter(p=>p.upnl>=0).length, minus=sorted.length-plus;
-  const sumUpnl=sorted.reduce((s,p)=>s+p.upnl,0);
-  const sumTxt=sumUpnl>=0?"insgesamt im Plus":"insgesamt im Minus";
-  $("starred-summary").textContent=`${plus} von ${sorted.length} im Plus, ${minus} im Minus — Summe ${usd(sumUpnl)} (${sumTxt}).`;
+  // Long- und Short-uPnL getrennt summieren
+  const longSum=sorted.filter(p=>p.side==="Long").reduce((s,p)=>s+p.upnl,0);
+  const shortSum=sorted.filter(p=>p.side==="Short").reduce((s,p)=>s+p.upnl,0);
+  const longN=sorted.filter(p=>p.side==="Long").length;
+  const shortN=sorted.filter(p=>p.side==="Short").length;
+  // Verdikt: welche Seite steht besser da
+  let verdict;
+  if(longSum>shortSum){
+    verdict=`<span class="up">Long-Seite liegt vorn</span> — die Long-Wale stehen besser da als die Shorts.`;
+  }else if(shortSum>longSum){
+    verdict=`<span class="down">Short-Seite liegt vorn</span> — die Short-Wale stehen besser da als die Longs.`;
+  }else{
+    verdict=`Beide Seiten etwa gleichauf.`;
+  }
+  $(sumId).innerHTML=
+    `<div class="row"><span>Long (${longN}):</span><span class="${longSum>=0?'up':'down'}">${usd(longSum)}</span></div>`+
+    `<div class="row"><span>Short (${shortN}):</span><span class="${shortSum>=0?'up':'down'}">${usd(shortSum)}</span></div>`+
+    `<div class="verdict">${verdict}</div>`;
 }
+
+function renderVerdict(){
+  const box=$("verdict-top"); box.innerHTML="";
+  ["BTC","ETH"].forEach(coin=>{
+    const rows=lastData.w.plist.filter(p=>PRIORITY.has(p.addr) && p.coin===coin);
+    const card=document.createElement("div");
+    if(!rows.length){
+      card.className="vcard neutral";
+      card.innerHTML=`<div class="vhead">${coin} · Empfehlung</div>
+        <div class="vmain">Keine Daten</div>
+        <div class="vsub">Aktuell keine Orientierungs-Wale mit offener ${coin}-Position.</div>`;
+      box.appendChild(card);return;
+    }
+    // uPnL nach Seite summieren
+    const shortRows=rows.filter(p=>p.side==="Short");
+    const longRows=rows.filter(p=>p.side==="Long");
+    const shortSum=shortRows.reduce((s,p)=>s+p.upnl,0);
+    const longSum=longRows.reduce((s,p)=>s+p.upnl,0);
+    // Mehrheitsseite nach Anzahl bestimmen
+    const majShort=shortRows.length>=longRows.length;
+    const majSide=majShort?"Short":"Long";
+    const majRows=majShort?shortRows:longRows;
+    const majSum=majShort?shortSum:longSum;
+    const majInMinus=majSum<0;
+
+    // Squeeze-Logik: Mehrheit im Minus -> gegen die Mehrheit; im Plus -> mit der Mehrheit
+    let rec, cls, why;
+    if(majInMinus){
+      // Mehrheit verliert -> Kurs läuft gegen sie -> in Kursrichtung gehen (= Gegenteil der Mehrheitsseite)
+      rec=majShort?"LONG":"SHORT";
+      cls=majShort?"long":"short";
+      why=`Die Mehrheit der Orientierungs-Wale sitzt ${majSide} und ist im Minus (${usd(majSum)}). `+
+          `Der Kurs läuft gegen sie — steigt bei Short-Mehrheit, fällt bei Long-Mehrheit. `+
+          `Squeeze-Druck spricht für ${rec}.`;
+    }else{
+      // Mehrheit gewinnt -> Trend bestätigt -> mit der Mehrheit
+      rec=majShort?"SHORT":"LONG";
+      cls=majShort?"short":"long";
+      why=`Die Mehrheit der Orientierungs-Wale sitzt ${majSide} und ist im Plus (${usd(majSum)}). `+
+          `Sie liegen richtig, der Trend ist bestätigt — mit der Mehrheit gehen spricht für ${rec}.`;
+    }
+    card.className="vcard "+cls;
+    card.innerHTML=`<div class="vhead">${coin} · Empfehlung (aus uPnL der ⭐-Wale)</div>
+      <div class="vmain">${rec}</div>
+      <div class="vsub">${why}<br>Long-Summe ${usd(longSum)} · Short-Summe ${usd(shortSum)}.</div>`;
+    box.appendChild(card);
+  });
+}
+
+function renderStarred(){
+  renderStarredFor("BTC","starred-btc","sum-btc");
+  renderStarredFor("ETH","starred-eth","sum-eth");
+}
+
 function showBanner(m){const b=$("banner");b.textContent=m;b.classList.add("show");}
 function hideBanner(){$("banner").classList.remove("show");}
 
@@ -520,6 +635,8 @@ async function refresh(){
     const [mkt,w]=await Promise.race([Promise.all([loadMarket(),loadWhales()]), overallTimeout]);
     lastData={mkt,w};
     renderCards(mkt,w);
+    renderVerdict();
+    renderReco();
     renderStarred();
     renderPositionsFor("BTC","pos-btc");
     renderPositionsFor("ETH","pos-eth");
