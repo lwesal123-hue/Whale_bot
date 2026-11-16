@@ -4,22 +4,22 @@
     "0xd6e56265890b76413d1d527eb9b75e334c0c5b42": {
       "HYPE": {
         "side": "Long",
-        "notional": 5440479.44533
+        "notional": 5361975.10171
       }
     },
     "0x7fba7e745bd97f828c824589680749b55a8c04ab": {},
     "0x5b5d51203a0f9079f8aeb098a6523a13f298c060": {
       "BTC": {
         "side": "Short",
-        "notional": 56933348.2257
+        "notional": 56635619.9409
       },
       "ETH": {
         "side": "Short",
-        "notional": 4881949.56486
+        "notional": 4837554.2434
       },
       "HYPE": {
         "side": "Short",
-        "notional": 34056083.37689
+        "notional": 33549893.94056
       }
     },
     "0x152e41f0b83e6cad4b5dc730c1d6279b7d67c9dc": {},
@@ -27,98 +27,98 @@
     "0x218a65e21eddeece7a9df38c6bbdd89f692b7da2": {
       "BTC": {
         "side": "Short",
-        "notional": 56599626.99255
+        "notional": 56432704.90935
       },
       "ETH": {
         "side": "Short",
-        "notional": 6322744.595222
+        "notional": 6288752.27618
       }
     },
     "0x32008fcb6bbd16532afc83ca8b6c920dde22c407": {},
     "0xcf5343ba750a6e30afbb1dadda08bc78f8c8ee11": {
       "BTC": {
         "side": "Short",
-        "notional": 65103.0
+        "notional": 64923.0
       },
       "ETH": {
         "side": "Short",
-        "notional": 12414239.647735
+        "notional": 12349265.00129
       },
       "HYPE": {
         "side": "Short",
-        "notional": 135486.223
+        "notional": 133533.2
       }
     },
     "0x3440f23a87f1950e7a88cd248fd270e92d1132c5": {
       "BTC": {
         "side": "Short",
-        "notional": 7166784.98037
+        "notional": 7146969.89817
       },
       "ETH": {
         "side": "Short",
-        "notional": 1977178.879775
+        "notional": 1966830.56185
       },
       "HYPE": {
         "side": "Long",
-        "notional": 1246061.84521
+        "notional": 1228099.964
       }
     },
     "0xa312114b5795dff9b8db50474dd57701aa78ad1e": {
       "HYPE": {
         "side": "Short",
-        "notional": 8916.06435
+        "notional": 8787.54
       }
     },
     "0x8af700ba841f30e0a3fcb0ee4c4a9d223e1efa05": {
       "BTC": {
         "side": "Long",
-        "notional": 13267939.90247
+        "notional": 13231662.52881
       },
       "ETH": {
         "side": "Long",
-        "notional": 68327.53373
+        "notional": 67968.05309
       },
       "HYPE": {
         "side": "Short",
-        "notional": 3234868.78924
+        "notional": 3188238.416
       }
     },
     "0xad227f63d34e7251c1d0ab65e64eeea07aee4e44": {},
     "0x6859da14835424957a1e6b397d8026b1d9ff7e1e": {
       "BTC": {
         "side": "Short",
-        "notional": 11743187.89814
+        "notional": 11517050.64342
       },
       "ETH": {
         "side": "Short",
-        "notional": 2253128.6118
+        "notional": 2237343.99035
       },
       "HYPE": {
         "side": "Short",
-        "notional": 427577.30443
+        "notional": 421413.812
       }
     },
     "0xac487c027ffe32021bbba77e30786f8c8f353201": {
       "BTC": {
         "side": "Long",
-        "notional": 7155993.0614
+        "notional": 7136427.0522
       }
     },
     "0x66f889094739dbb7d20aa60f645acd88feba75a9": {},
     "0x6daec5ff434924e0839358e710e6ae5f158590de": {
       "BTC": {
         "side": "Long",
-        "notional": 651010.0
+        "notional": 649230.0
       },
       "ETH": {
         "side": "Long",
-        "notional": 2150182.32226
+        "notional": 2138869.91458
       }
     },
     "0xd21d931890d27b6e7e2e668f27931e17698e90f1": {
       "BTC": {
         "side": "Short",
-        "notional": 382026.33921
+        "notional": 380981.79783
       }
     }
   },
@@ -229,5 +229,5 @@
     "f6124ee0d8ef1d1cde04d4c989109af472cc3a08",
     "10317cc94430adeaaab8cb6d01581a624fbbd7e9"
   ],
-  "last_digest": "2026-11-15T20:59:34.207761+00:00"
+  "last_digest": "2026-11-16T00:57:19.705421+00:00"
 }
